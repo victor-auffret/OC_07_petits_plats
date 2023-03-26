@@ -1,0 +1,251 @@
+/** reset **/
+html,
+body,
+p,
+ol,
+ul,
+li,
+dl,
+dt,
+dd,
+blockquote,
+figure,
+fieldset,
+legend,
+textarea,
+pre,
+iframe,
+hr,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin: 0;
+  padding: 0;
+}
+
+article,
+aside,
+details,
+dialog,
+div,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+main,
+menu,
+nav,
+section {
+  display: block;
+}
+
+html {
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  font-size: 100%;
+}
+
+*,
+*::before,
+*::after {
+  -webkit-box-sizing: inherit;
+  box-sizing: inherit;
+}
+
+a,
+a:hover,
+a:visited {
+  text-decoration: none;
+  color: default;
+}
+
+ul,
+ol {
+  list-style: none;
+}
+
+/** general **/
+:root {
+  --blanc-bg: #fff;
+  --orange-title: #d04f4f;
+
+  --gris-input: #e7e7e7;
+
+  --bleu-btn: #3282f7;
+  --vert-btn: #68d9a4;
+  --orange-btn: #ed6454;
+
+  --gris-image: #c7bebe;
+  --gris-description: #e7e7e7;
+}
+
+body {
+  font-size: 20px;
+  font-family: "DM Sans", sans-serif;
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  background-color: var(--blanc-bg);
+  box-sizing: border-box;
+}
+
+.app {
+  width: 100%;
+  background-color: transparent;
+}
+
+.enseigne {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top: clamp(10px, 3vw, 50px);
+  margin-bottom: clamp(10px, 1.5vw, 25px);
+  text-align: center;
+  color: var(--orange-title);
+}
+
+.main {
+  margin-right: clamp(30px, 7vw, 130px);
+  margin-left: clamp(30px, 7vw, 130px);
+}
+
+.label-chercher-recette {
+  display: inline-flex;
+  flex-direction: row;
+  width: 100%;
+  background-color: var(--gris-input);
+  margin-bottom: 35px;
+}
+
+.chercher-recette {
+  width: calc(100% - 70px);
+  height: 70px;
+  background-color: transparent;
+  padding-left: 20px;
+  border: none;
+}
+
+.loupe {
+  position: relative;
+  display: inline;
+  top: 0;
+  right: 0;
+  height: 70px;
+  border: none;
+  background-color: transparent;
+  z-index: 5;
+  aspect-ratio: 1 / 1;
+}
+
+.list-tags {
+  margin-bottom: 15px;
+}
+
+.form-criteres {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: start;
+  margin-bottom: 25px;
+}
+
+.label-critere {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
+  height: 70px;
+  margin-right: 20px;
+  padding-left: 30px;
+  padding-right: 30px;
+  gap: 30px;
+}
+
+.label-ingredient {
+  background-color: var(--bleu-btn);
+}
+
+.label-appareils {
+  background-color: var(--vert-btn);
+}
+
+.label-ustensiles {
+  background-color: var(--orange-btn);
+}
+
+/** card **/
+
+.resultats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.card-recette {
+  background-color: var(--gris-image);
+}
+
+.card-image {
+  min-height: 180px;
+  width: 100%;
+  background-color: var(--gris-image);
+}
+
+.card-footer {
+  padding: 20px;
+  background-color: var(--gris-description);
+  font-family: "Lato";
+}
+
+.card-header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  font-size: 1.125rem;
+}
+
+.card-title {
+  font-weight: 400;
+}
+
+.card-title::first-letter {
+  text-transform: capitalize;
+}
+
+.card-temps {
+  font-family: "Lato";
+  font-weight: 700;
+}
+
+.card-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.card-ingredients {
+  font-family: "Lato";
+  font-size: 0.75rem;
+  line-height: 14.4px;
+}
+
+.card-ingredient {
+  font-weight: 700;
+}
+
+.card-ingredient-quantite {
+  font-weight: 400;
+}
+
+.card-instructions {
+  font-family: "Roboto";
+  font-weight: 400;
+  line-height: 12px;
+  font-size: 0.75rem;
+}

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="fr">
+	<head>
+		<meta charset="UTF-8">
+  <link rel="icon" type="image/png" href="./assets/favicon.png">
+		<meta name="viewport" content="width=device-width">
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400;1,500;1,700&display=swap" rel="stylesheet">
+		<link rel="stylesheet" href="./css/style.css">
+		<title> Les petits plats </title>
+		<link rel="preload" href="./data/data.json" as="fetch">
+	</head>
+	<body>
+		<div class="app">
+			<header class="enseigne">
+  <img src="./assets/toque.svg" alt="logo de l'enseigne">
+  <h1>Les petits plats</h1>
+ </header><main class="main">
+  <form action="#">
+
+   <label for="chercher-recette" class="label-chercher-recette">
+    <input type="search" class="chercher-recette" name="chercher-recette" id="chercher-recette" placeholder="Rechercher une recette">
+    
+    <button class="loupe" name="loupe" id="loupe" type="button">
+      <img src="./assets/loupe.svg" alt="loupe">
+    </button>
+
+   </label>
+
+   <div class="list-tags">
+     <!-- ici on liste les critères -->
+    </div>
+
+   <div class="form-criteres">
+
+    <label class="label-critere label-ingredient" for="ingredients">
+     <input type="search" name="ingredients" id="ingredients">
+     <img class="icon-arrow" src="./assets/arrow_down.svg" alt="">
+    </label>
+
+    <label class="label-critere label-appareils" for="appareils">
+     <input type="search" name="appareils" id="appareils">
+     <img class="icon-arrow" src="./assets/arrow_down.svg" alt="">
+    </label>
+
+    <label class="label-critere label-ustensiles" for="ustensiles">
+     <input type="search" name="ustensiles" id="ustensiles">
+     <img class="icon-arrow" src="./assets/arrow_down.svg" alt="">
+    </label>
+
+   </div>
+
+   <div class="resultats">
+
+    <article class="card-recette">
+      <div class="card-image">
+
+      </div>
+      <footer class="card-footer">
+
+        <div class="card-header">
+          <h4 class="card-title">nom de la recette</h4>
+          <p class="card-temps">
+            <img src="./assets/horloge.svg" alt="horloge">
+            <data value="10">10 min</data>
+          </p>
+        </div>
+
+        <div class="card-content">
+          <div class="card-ingredients">
+            <ul>
+              <li class="card-ingredient">
+                truc : 
+                <data class="card-ingredient-quantite" value="4">4</data>
+              </li>
+              <li>machin : 7</li>
+              <li>bidule : 9</li>
+            </ul>
+          </div>
+          <div class="card-instructions">
+            <p>Verser le truc dans le machin</p>
+            <p>Faire cuire bidule 5 minutes</p>
+            <p>Mélanger le tout et servir</p>
+          </div>
+        </div>
+
+      </footer>
+    </article>
+
+
+   </div>
+
+  </form>
+ </main>
+		</div>
+	</body></html>
