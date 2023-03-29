@@ -152,6 +152,7 @@ body {
   flex-direction: row;
   align-items: center;
   justify-content: start;
+  flex-wrap: wrap;
   margin-bottom: 25px;
 }
 
@@ -183,11 +184,16 @@ body {
 
 .resultats {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(3, 1fr);
+  gap: 50px;
 }
 
 .card-recette {
-  background-color: var(--gris-image);
+  display: flex;
+  flex-direction: column;
+  flex-flow: column;
+  background-color: red;
+  height: 100%;
 }
 
 .card-image {
@@ -200,6 +206,8 @@ body {
   padding: 20px;
   background-color: var(--gris-description);
   font-family: "Lato";
+  /*height: 100%;*/
+  flex-grow: 1;
 }
 
 .card-header {
@@ -227,6 +235,7 @@ body {
 .card-content {
   display: grid;
   grid-template-columns: 1fr 1fr;
+  gap: 10px;
 }
 
 .card-ingredients {
