@@ -15,6 +15,6 @@
   "author": "victor-auffret",
   "license": "MIT",
   "devDependencies": {
-    "astro": "^2.1.7"
+    "astro": "^2.2.0"
   }
 }
