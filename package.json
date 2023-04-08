@@ -10,11 +10,16 @@
     "start": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "bench": "node public/js/bench.js"
+  },
+  "engines": {
+    "node": ">=19"
   },
   "author": "victor-auffret",
   "license": "MIT",
   "devDependencies": {
-    "astro": "^2.2.0"
+    "astro": "^2.2.0",
+    "benchmark": "^2.1.4"
   }
 }

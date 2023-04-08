@@ -49,11 +49,6 @@ class Filter {
     this.isFormated = false
   }
 
-  // titre       = name, 
-  // ingredient  = ingredients, 
-  // description = description
-  // ustenciles  = ustensils
-  // appareils   = appliance
   setZone(zones = []) {
     this.zones = zones
   }
@@ -66,12 +61,6 @@ class Filter {
     return !(tag == "" || tag.length < 3)
   }
 
-}
-
-class CombinedFilter extends Filter {
-  constructor(data1, data2) {
-    super([...new Set([...data1, ...data2])])
-  }
 }
 
 class FilterFonctionnel extends Filter {
@@ -158,4 +147,4 @@ class FilterForWhile extends Filter {
   }
 }
 
-export { Filter, FilterFonctionnel, FilterForWhile, CombinedFilter }
+export { Filter, FilterFonctionnel, FilterForWhile }
