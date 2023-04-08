@@ -1,3 +1,5 @@
+import { ZONES } from './util.js'
+
 /*
 Ingredient { 
  ingredient: string, -----------------
@@ -29,10 +31,14 @@ class Filter {
  // on transforme tout en tableau de string
  formateData() {
   this.data = this.data.map(recipe => {
-   recipe.name = [recipe.name ?? ""]
-   recipe.ingredients = recipe.ingredients.map(ing => ing.ingredient)
-   recipe.description = [recipe.description ?? ""]
-   recipe.appliance = [recipe.appliance ?? ""]
+   const zones = {
+    [ZONES.appareils]: [recipe.appliance ?? ""],
+    [ZONES.description]: [recipe.description ?? ""],
+    [ZONES.ingredients]: recipe.ingredients.map(ing => ing.ingredient),
+    [ZONES.titre]: [recipe.name ?? ""],
+    [ZONES.ustenciles]: recipe.ustensils ?? []
+   }
+   recipe.zones = zones
    return recipe
   })
   this.isFormated = true
@@ -52,7 +58,7 @@ class Filter {
   this.zones = zones
  }
 
- filter(tag = "") {
+ async filter(tag = "") {
   return this.data;
  }
 
@@ -62,50 +68,78 @@ class Filter {
 
 }
 
+class CombinedFilter extends Filter {
+ constructor(data1, data2) {
+  super([...new Set([...data1, ...data2])])
+ }
+}
+
 class FilterFonctionnel extends Filter {
  constructor(data) {
   super(data)
  }
 
- filter(tag = "") {
+ async filter(tag = "") {
   if (!this.tagIsValid(tag)) {
    return this.data
   }
-  const predicate = async recipe => {
-   const exp = new RegExp(tag)
+  const exp = new RegExp(tag)
+  const predicate = async (recipe) => {
    let promises = []
    this.zones.forEach(zone => {
-    promises.add(new Promise((resolve, reject) => {
-     const i = recipe[zone].findIndex(txt => exp.test(txt))
-     const callback = (i < 0) ? reject : resolve
-     callback()
+    promises.push(new Promise((resolve, reject) => {
+     const i = recipe.zones[zone].findIndex(txt => exp.test(txt))
+     if (i < 0) {
+      reject(false)
+     } else {
+      resolve(true)
+     }
     }))
    })
    let result = false
    await Promise.any(promises)
-    .then(() => result = true)
-    .catch(() => result = false)
+    .then(() => {
+     result ||= true
+     //console.log("au moins un de vrai pour : ", recipe)
+     return true
+    })
+    .catch(() => {
+     //console.log("tout est faux pour : ", recipe)
+     return false
+    })
    return result
   }
 
-  return this.data.filter(async recipe => await predicate(recipe.name))
+  const asyncFilter = async (arr) => {
+   return Promise.all(arr.map(predicate))
+    .then((results) => arr.filter((_v, index) => results[index]));
+  }
+
+  return await asyncFilter(this.data)
+
+
+  /*
+ return this.data.filter(async (recipe) => {
+  const OK = await predicate(recipe)
+  console.log("test de : ", recipe.name, " => ", OK)
+  return OK
+ })*/
  }
 
 }
 
 class FilterForWhile extends Filter {
 
- filter(tag = "") {
+ async filter(tag = "") {
   if (!this.tagIsValid(tag)) {
    return this.data
   }
-
-  const predicate = recipe => {
-   const exp = new RegExp(tag)
+  const exp = new RegExp(tag)
+  const predicate = (recipe) => {
    let trouve = false
    let zone = 0
-   while (!trouve || zone < this.zones.length) {
-    let tab = recipe[zone]
+   while (!trouve || zone < recipe.zones.length) {
+    let tab = recipe.zones[zone] ?? []
     let i = 0
     while (!trouve && i < tab.length) {
      trouve = exp.test(tab[i])
@@ -131,4 +165,4 @@ class FilterForWhile extends Filter {
  }
 }
 
-export { Filter, FilterFonctionnel, FilterForWhile }
+export { Filter, FilterFonctionnel, FilterForWhile, CombinedFilter }

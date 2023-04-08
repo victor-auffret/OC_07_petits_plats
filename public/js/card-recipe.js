@@ -30,7 +30,7 @@ class CardRecipe extends HTMLElement {
   if (data != null && data != "") {
    const recipe = JSON.parse(data)
    removeAllChild(this)
-   console.log(recipe)
+
    let card = document.createElement("article")
    card.classList.add("card-recette")
    let cardImage = document.createElement("div")

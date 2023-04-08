@@ -5,4 +5,12 @@ function removeAllChild(node) {
  }
 }
 
-export { removeAllChild }
+const ZONES = {
+ titre: '_TITRE',
+ ingredients: '_INGREDIENTS',
+ description: '_DESCRIPTION',
+ ustenciles: '_USTENCILES',
+ appareils: '_APPAREILS'
+}
+
+export { removeAllChild, ZONES }

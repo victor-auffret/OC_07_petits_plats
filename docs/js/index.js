@@ -1,48 +1,70 @@
 import { CardRecipe } from "./card-recipe.js"
-// import { Filter } from "./filter.js"
-import { removeAllChild } from "./util.js"
+import { /*FilterFonctionnel,*/ FilterForWhile } from "./filter.js"
+import { removeAllChild, ZONES } from "./util.js"
 
 async function getData() {
- return (await fetch("./data/data.json")).json()
+  return (await fetch("./data/data.json")).json()
 }
 
-async function loadRecipes(data) {
- console.log(data)
- let resultats = document.querySelector(".resultats")
- removeAllChild(resultats)
- await window.customElements
-  .whenDefined("card-recipe")
-  .then(async () => {
-   const { recipes = [] } = data
-   for (let i = 0; i < recipes.length; i++) {
-    let card = document.createElement("card-recipe")
-    let recipeZip = JSON.stringify(recipes[i])
-    card.setAttribute("recipe", recipeZip)
-    card.recipe = recipeZip
-    resultats.appendChild(card)
-   }
-  })
+async function loadRecipes(recipes = []) {
+  let resultats = document.querySelector(".resultats")
+  removeAllChild(resultats)
+  await window.customElements
+    .whenDefined("card-recipe")
+    .then(async () => {
+      for (let i = 0; i < recipes.length; i++) {
+        let card = document.createElement("card-recipe")
+        let recipeZip = JSON.stringify(recipes[i])
+        card.setAttribute("recipe", recipeZip)
+        card.recipe = recipeZip
+        resultats.appendChild(card)
+      }
+    })
 }
+
+
 
 async function main() {
- window.customElements.define("card-recipe", CardRecipe)
- let data = await getData()
- /*
- let filter = new Filter(data)
+  window.customElements.define("card-recipe", CardRecipe)
+  let data = await getData()
+  /*
+  let filter = new Filter(data)
+ 
+  let searchForm = document.querySelector("")
+  searchForm.addEventListener("submit", e => {
+   e.preventDefault()
+   let inputValue = document.querySelector("").value
+   let filtredData = filter.filter(inputValue)
+   loadRecipes(filtredData)
+  })
+  */
+  console.log(data)
 
- let searchForm = document.querySelector("")
- searchForm.addEventListener("submit", e => {
-  e.preventDefault()
-  let inputValue = document.querySelector("").value
-  let filtredData = filter.filter(inputValue)
-  loadRecipes(filtredData)
- })
- */
+  let champRecherchePrincipal = document.querySelector("#chercher-recette")
 
- await loadRecipes(data)
+  let formulaire = document.querySelector("#form-recherche")
+  formulaire.addEventListener('submit', async (e) => {
+    e.preventDefault()
+    const tag = champRecherchePrincipal.value
+    if (tag.length >= 3) {
+      //let filtre = new FilterFonctionnel(data.recipes)
+      let filtre = new FilterForWhile(data.recipes)
+      filtre.setZone([
+        ZONES.titre,
+        ZONES.ingredients,
+        ZONES.description
+      ])
+      await filtre.filter(tag).then(result => {
+        //console.log("result : :::: ", result)
+        return loadRecipes(result)
+      })
+    }
+  })
+
+  await loadRecipes(data.recipes)
 }
 
 document.addEventListener('readystatechange', () => {
- const elem = (window.addEventListener) ? window : document;
- elem.addEventListener('load', main, false);
+  const elem = (window.addEventListener) ? window : document;
+  elem.addEventListener('load', main, false);
 });
