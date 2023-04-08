@@ -21,148 +21,141 @@ Recipe {
 
 class Filter {
 
- constructor(data = []) {
-  this.isFormated = false
-  this.zones = []
-  this.data = data;
-  this.formateData()
- }
+  constructor(data = []) {
+    this.isFormated = false
+    this.zones = []
+    this.data = data;
+    this.formateData()
+  }
 
- // on transforme tout en tableau de string
- formateData() {
-  this.data = this.data.map(recipe => {
-   const zones = {
-    [ZONES.appareils]: [recipe.appliance ?? ""],
-    [ZONES.description]: [recipe.description ?? ""],
-    [ZONES.ingredients]: recipe.ingredients.map(ing => ing.ingredient),
-    [ZONES.titre]: [recipe.name ?? ""],
-    [ZONES.ustenciles]: recipe.ustensils ?? []
-   }
-   recipe.zones = zones
-   return recipe
-  })
-  this.isFormated = true
- }
+  // on transforme tout en tableau de string
+  formateData() {
+    this.data = this.data.map(recipe => {
+      const zones = {
+        [ZONES.appareils]: [recipe.appliance ?? ""],
+        [ZONES.description]: [recipe.description ?? ""],
+        [ZONES.ingredients]: recipe.ingredients.map(ing => ing.ingredient),
+        [ZONES.titre]: [recipe.name ?? ""],
+        [ZONES.ustenciles]: recipe.ustensils ?? []
+      }
+      recipe.zones = zones
+      return recipe
+    })
+    this.isFormated = true
+  }
 
- setData(data = []) {
-  this.data = data;
-  this.isFormated = false
- }
+  setData(data = []) {
+    this.data = data;
+    this.isFormated = false
+  }
 
- // titre       = name, 
- // ingredient  = ingredients, 
- // description = description
- // ustenciles  = ustensils
- // appareils   = appliance
- setZone(zones = []) {
-  this.zones = zones
- }
+  // titre       = name, 
+  // ingredient  = ingredients, 
+  // description = description
+  // ustenciles  = ustensils
+  // appareils   = appliance
+  setZone(zones = []) {
+    this.zones = zones
+  }
 
- async filter(tag = "") {
-  return this.data;
- }
+  async filter(tag = "") {
+    return this.data;
+  }
 
- tagIsValid(tag = "") {
-  return !(tag == "" || tag.length < 3)
- }
+  tagIsValid(tag = "") {
+    return !(tag == "" || tag.length < 3)
+  }
 
 }
 
 class CombinedFilter extends Filter {
- constructor(data1, data2) {
-  super([...new Set([...data1, ...data2])])
- }
+  constructor(data1, data2) {
+    super([...new Set([...data1, ...data2])])
+  }
 }
 
 class FilterFonctionnel extends Filter {
- constructor(data) {
-  super(data)
- }
-
- async filter(tag = "") {
-  if (!this.tagIsValid(tag)) {
-   return this.data
-  }
-  const exp = new RegExp(tag)
-  const predicate = async (recipe) => {
-   let promises = []
-   this.zones.forEach(zone => {
-    promises.push(new Promise((resolve, reject) => {
-     const i = recipe.zones[zone].findIndex(txt => exp.test(txt))
-     if (i < 0) {
-      reject(false)
-     } else {
-      resolve(true)
-     }
-    }))
-   })
-   let result = false
-   await Promise.any(promises)
-    .then(() => {
-     result ||= true
-     //console.log("au moins un de vrai pour : ", recipe)
-     return true
-    })
-    .catch(() => {
-     //console.log("tout est faux pour : ", recipe)
-     return false
-    })
-   return result
+  constructor(data) {
+    super(data)
   }
 
-  const asyncFilter = async (arr) => {
-   return Promise.all(arr.map(predicate))
-    .then((results) => arr.filter((_v, index) => results[index]));
+  async filter(tag = "") {
+    if (!this.tagIsValid(tag)) {
+      return this.data
+    }
+    const exp = new RegExp(tag)
+    const predicate = async (recipe) => {
+      let promises = []
+      this.zones.forEach(zone => {
+        promises.push(new Promise((resolve, reject) => {
+          const i = recipe.zones[zone].findIndex(txt => exp.test(txt))
+          if (i < 0) {
+            reject(false)
+          } else {
+            resolve(true)
+          }
+        }))
+      })
+      let result = false
+      await Promise.any(promises)
+        .then(() => {
+          result ||= true
+          //console.log("au moins un de vrai pour : ", recipe)
+          return true
+        })
+        .catch(() => {
+          //console.log("tout est faux pour : ", recipe)
+          return false
+        })
+      return result
+    }
+
+    const asyncFilter = async (arr) => {
+      return Promise.all(arr.map(predicate))
+        .then((results) => arr.filter((_v, index) => results[index]));
+    }
+
+    return await asyncFilter(this.data)
+
   }
-
-  return await asyncFilter(this.data)
-
-
-  /*
- return this.data.filter(async (recipe) => {
-  const OK = await predicate(recipe)
-  console.log("test de : ", recipe.name, " => ", OK)
-  return OK
- })*/
- }
 
 }
 
 class FilterForWhile extends Filter {
 
- async filter(tag = "") {
-  if (!this.tagIsValid(tag)) {
-   return this.data
-  }
-  const exp = new RegExp(tag)
-  const predicate = (recipe) => {
-   let trouve = false
-   let zone = 0
-   while (!trouve || zone < recipe.zones.length) {
-    let tab = recipe.zones[zone] ?? []
-    let i = 0
-    while (!trouve && i < tab.length) {
-     trouve = exp.test(tab[i])
-     i++
+  async filter(tag = "") {
+    if (!this.tagIsValid(tag)) {
+      return this.data
     }
-    zone++
-   }
-   return trouve
-  }
+    const exp = new RegExp(tag)
+    const predicate = (recipe) => {
+      let trouve = false
+      let zone = 0
+      while (!trouve && zone < this.zones.length) {
+        let currentZone = this.zones[zone]
+        let i = 0
+        while (!trouve && i < recipe.zones[currentZone].length) {
+          trouve ||= exp.test(recipe.zones[currentZone][i])
+          i++
+        }
+        zone++
+      }
+      return trouve
+    }
 
-  let index = -1
-  let resIndex = 0
-  const length = this.data == null ? 0 : this.data.length
-  const result = []
+    let index = -1
+    let resIndex = 0
+    const length = this.data.length
+    const result = []
 
-  while (++index < length) {
-   const value = this.data[index]
-   if (predicate(value)) {
-    result[resIndex++] = value
-   }
+    while (++index < length) {
+      const value = this.data[index]
+      if (predicate(value)) {
+        result[resIndex++] = value
+      }
+    }
+    return result
   }
-  return result
- }
 }
 
 export { Filter, FilterFonctionnel, FilterForWhile, CombinedFilter }

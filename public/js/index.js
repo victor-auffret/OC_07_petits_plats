@@ -55,7 +55,7 @@ async function main() {
         ZONES.description
       ])
       await filtre.filter(tag).then(result => {
-        //console.log("result : :::: ", result)
+        console.log("result : :::: ", result)
         return loadRecipes(result)
       })
     }
