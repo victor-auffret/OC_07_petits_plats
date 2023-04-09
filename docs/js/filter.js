@@ -52,11 +52,15 @@ class FilterFonctionnel extends Filter {
     }
     const exp = new RegExp(tag);
 
+    const zones_size = this.zones.length;
+
     const predicate = async (recipe) => {
       let promises = [];
-      for (let zone of this.zones) {
+
+      for (let i = 0; i < zones_size; i++) {
+        const zone = this.zones[i];
         promises.push(new Promise((resolve, reject) => {
-          const currentList = Array.from(recipe?.zones?.[zone]);
+          const currentList = recipe?.zones?.[zone];
           const ok = currentList.some(txt => exp.test(txt))
           if (ok) {
             resolve(true);
@@ -65,64 +69,30 @@ class FilterFonctionnel extends Filter {
           }
         }));
       }
+
+      /*
+      for (let zone of this.zones) {
+        promises.push(new Promise((resolve, reject) => {
+          const currentList = recipe?.zones?.[zone];
+          const ok = currentList.some(txt => exp.test(txt))
+          if (ok) {
+            resolve(true);
+          } else {
+            reject(false);
+          }
+        }));
+      }*/
       return Promise.any(promises).catch(() => false)
     }
+    // OK
+    return this.data.reduce(async (results, recipe) => Promise.all([results, predicate(recipe)]).then(([r, ok]) => ok ? [...r, recipe] : r), []);
+    // NE FONCTIONNE PAS
+    // return this.data.filter(predicate)
 
-    return Promise.all(this.data.map(recipe => predicate(recipe))).then(boolTab => this.data.filter((_, i) => boolTab[i]))
-
-    /*
-    let results = []
-    let promeses = []
-    this.data.forEach(recipe => {
-      promeses.push(predicate(recipe).then(ok => {
-        if (ok) {
-          results.push(recipe)
-        }
-      }))
-    })
-    return Promise.all(promeses).then(() => results)
-    */
+    // FAIT 2 BOUCLES
+    // return Promise.all(this.data.map(recipe => predicate(recipe))).then(boolTab => this.data.filter((_, i) => boolTab[i]))
   }
 
-  /*
-
-  async filter(tag = "") {
-
-    const predicate = async (recipe) => {
-      let promises = [];
-      this.zones.forEach(
-        zone => promises.push(
-          new Promise(
-            () => recipe.zones[zone].findIndex(txt => exp.test(txt)) >= 0
-          )
-        )
-      )
-      return Promise.all(promises).then(tab => tab.some(v => v == true));
-    }
-    const asyncFilter = async (arr = []) => {
-      console.log("enter async", arr)
-      let promises = []
-      const size = arr.length
-      for (let i = 0; i < size; i++) {
-        promises.push(new Promise(async (resolve) => predicate(arr[i]).then(resolve)));
-      }
-      console.log("push", promises.length)
-      globalThis.setTimeout(() => {
-        console.log(promises)
-      }, 5000)
-      return Promise.all(promises).then((results) => {
-        console.log("results", results)
-        arr.filter((_v, index) => results[index])
-      }).catch((r) => {
-        console.log("erreur", r)
-      }).finally(() => {
-        console.log("fin wtf", promises)
-      });
-    }
-    return asyncFilter(this.data);
-  }
-
-  */
 }
 
 class FilterForWhile extends Filter {

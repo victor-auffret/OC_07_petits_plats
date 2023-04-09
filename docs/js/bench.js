@@ -13,7 +13,9 @@ const tags = [
  "les",
  "poisson",
  "sucre",
- "vers"
+ "minutes",
+ "sur",
+ "cui"
 ]
 // nombre d execution de code
 const fois = 1_000_000;
@@ -26,41 +28,21 @@ const ZONES_A_TESTER = [
  ZONES.description
 ];
 
-// FilterFonctionnel
-const f1 = async (tag = "") => {
- const filtre = new FilterFonctionnel(recipes);
- filtre.setZone(ZONES_A_TESTER);
- return filtre.filter(tag);
-}
-
-// FilterForWhile
-const f2 = async (tag = "") => {
- const filtre = new FilterForWhile(recipes);
- filtre.setZone(ZONES_A_TESTER);
- return filtre.filter(tag);
-}
-
-const f3 = async (tag = "") => {
- const filtre = new FilterSansPromise(recipes);
- filtre.setZone(ZONES_A_TESTER);
- return filtre.filter(tag);
-}
-
 const algos = [
  {
   nom: "Algo Fonctionnel avec PROMISE",
-  fonction: f1,
-  temps: 0
+  temps: 0,
+  construct: new FilterFonctionnel(recipes)
  },
  {
   nom: "Algo avec WHILE",
-  fonction: f2,
-  temps: 0
+  temps: 0,
+  construct: new FilterForWhile(recipes)
  },
  {
   nom: "Algo Fonctionnel HYBRIDE (while, sans promise)",
-  fonction: f3,
-  temps: 0
+  temps: 0,
+  construct: new FilterSansPromise(recipes)
  },
 ];
 
@@ -70,7 +52,7 @@ const algos = [
  const test = async (algo, tag = "") => {
   //console.log(`test de l'algo ${algo.nom}`);
   const start = performance.now();
-  await algo.fonction(tag);
+  await algo.construct.filter(tag);
   const stop = performance.now();
   const total = (stop - start);
   algo.temps = (algo.temps + total);
@@ -78,6 +60,7 @@ const algos = [
  }
 
  let algo_melange = algos
+ algo_melange.forEach(algo => algo.construct.setZone(ZONES_A_TESTER))
 
  // on test 100 fois
  for (let i = 0; i < fois; i++) {
