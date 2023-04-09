@@ -18,7 +18,7 @@ const tags = [
  "cui"
 ]
 // nombre d execution de code
-const fois = 1_000_000;
+const fois = 3_000_000;
 // on peut ignorer les premiers resultats
 const ignore = 0;
 

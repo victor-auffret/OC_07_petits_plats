@@ -56,7 +56,6 @@ class FilterFonctionnel extends Filter {
 
     const predicate = async (recipe) => {
       let promises = [];
-
       for (let i = 0; i < zones_size; i++) {
         const zone = this.zones[i];
         promises.push(new Promise((resolve, reject) => {
@@ -69,23 +68,13 @@ class FilterFonctionnel extends Filter {
           }
         }));
       }
-
-      /*
-      for (let zone of this.zones) {
-        promises.push(new Promise((resolve, reject) => {
-          const currentList = recipe?.zones?.[zone];
-          const ok = currentList.some(txt => exp.test(txt))
-          if (ok) {
-            resolve(true);
-          } else {
-            reject(false);
-          }
-        }));
-      }*/
-      return Promise.any(promises).catch(() => false)
+      return Promise.any(promises).catch(() => false);
     }
     // OK
-    return this.data.reduce(async (results, recipe) => Promise.all([results, predicate(recipe)]).then(([r, ok]) => ok ? [...r, recipe] : r), []);
+    return this.data.reduce(async (results, recipe) => await predicate(recipe) ? [...(await results), recipe] : results, []);
+    // predicate(recipe).then(async ok => ok ? [...(await results), recipe] : results)
+    // Promise.all([results, predicate(recipe)]).then(([r, ok]) => ok ? [...r, recipe] : r)
+
     // NE FONCTIONNE PAS
     // return this.data.filter(predicate)
 
@@ -142,14 +131,14 @@ class FilterSansPromise extends Filter {
       return this.data;
     }
     const exp = new RegExp(tag);
-    const nb_of_zone = this.zones.length ?? 0;
+    const nb_of_zone = this.zones.length;
     const predicate = (recipe) => {
       let trouve = false;
       let i = 0;
       while (!trouve && i < nb_of_zone) {
         const currentZone = this.zones[i];
         const currentList = recipe.zones[currentZone];
-        trouve ||= (currentList.some(chaine => exp.test(chaine)));
+        trouve = (currentList.some(chaine => exp.test(chaine)));
         ++i;
       }
       return trouve;
