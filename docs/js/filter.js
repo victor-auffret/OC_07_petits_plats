@@ -54,22 +54,34 @@ class FilterFonctionnel extends Filter {
 
     const predicate = async (recipe) => {
       let promises = [];
-      this.zones.forEach(zone => {
+      for (let zone of this.zones) {
         promises.push(new Promise((resolve, reject) => {
-          const ok = recipe.zones[zone].some(txt => exp.test(txt))
+          const currentList = Array.from(recipe?.zones?.[zone]);
+          const ok = currentList.some(txt => exp.test(txt))
           if (ok) {
             resolve(true);
           } else {
             reject(false);
           }
-        }))
-      })
-      return Promise.any(promises).catch((v) => false)
+        }));
+      }
+      return Promise.any(promises).catch(() => false)
     }
-    const asyncFilter = async (arr) => Promise.all(arr.map(predicate))
-      .then((results) => arr.filter((_v, index) => results[index]));
 
-    return asyncFilter(this.data)
+    return Promise.all(this.data.map(recipe => predicate(recipe))).then(boolTab => this.data.filter((_, i) => boolTab[i]))
+
+    /*
+    let results = []
+    let promeses = []
+    this.data.forEach(recipe => {
+      promeses.push(predicate(recipe).then(ok => {
+        if (ok) {
+          results.push(recipe)
+        }
+      }))
+    })
+    return Promise.all(promeses).then(() => results)
+    */
   }
 
   /*
@@ -125,8 +137,8 @@ class FilterForWhile extends Filter {
       let trouve = false;
       let zone = 0;
       while (!trouve && zone < zones_size) {
-        //const currentZone = ;
-        const currentList = recipe.zones[this.zones[zone]]
+        const currentZone = this.zones[zone];
+        const currentList = recipe.zones[currentZone]
         const currentListSize = currentList.length
         let i = 0;
         while (!trouve && i < currentListSize) {
@@ -165,14 +177,13 @@ class FilterSansPromise extends Filter {
       let trouve = false;
       let i = 0;
       while (!trouve && i < nb_of_zone) {
-        //const currentZone = this.zones[i];
-        const currentList = recipe.zones[this.zones[i]];
+        const currentZone = this.zones[i];
+        const currentList = recipe.zones[currentZone];
         trouve ||= (currentList.some(chaine => exp.test(chaine)));
         ++i;
       }
       return trouve;
     };
-
     return this.data.filter(predicate)
   }
 

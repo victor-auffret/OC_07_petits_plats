@@ -1,4 +1,3 @@
-// import microtime from "microtime";
 import { FilterFonctionnel, FilterForWhile, FilterSansPromise } from "./filter.js";
 import { ZONES, melanger } from "./util.js";
 import * as data from "../data/data.json" assert {
@@ -11,11 +10,13 @@ const recipes = melanger(data.recipes)
 const tags = [
  "miel",
  "coco",
+ "les",
  "poisson",
- "sucre"
+ "sucre",
+ "vers"
 ]
 // nombre d execution de code
-const fois = 1000;
+const fois = 1_000_000;
 // on peut ignorer les premiers resultats
 const ignore = 0;
 
@@ -47,17 +48,17 @@ const f3 = async (tag = "") => {
 
 const algos = [
  {
-  nom: "FilterFonctionnel",
+  nom: "Algo Fonctionnel avec PROMISE",
   fonction: f1,
   temps: 0
  },
  {
-  nom: "FilterForWhile",
+  nom: "Algo avec WHILE",
   fonction: f2,
   temps: 0
  },
  {
-  nom: "FilterSansPromise",
+  nom: "Algo Fonctionnel HYBRIDE (while, sans promise)",
   fonction: f3,
   temps: 0
  },
@@ -67,13 +68,13 @@ const algos = [
  console.log("test des algos");
 
  const test = async (algo, tag = "") => {
-  console.log(`test de l'algo ${algo.nom}`);
-  const start = performance.now(); // microtime.now();
+  //console.log(`test de l'algo ${algo.nom}`);
+  const start = performance.now();
   await algo.fonction(tag);
-  const stop = performance.now(); // microtime.now();
+  const stop = performance.now();
   const total = (stop - start);
   algo.temps = (algo.temps + total);
-  console.log(`${algo.nom} : ${total} - temps total : ${algo.temps}ms`);
+  //console.log(`${algo.nom} : ${total} - temps total : ${algo.temps}ms`);
  }
 
  let algo_melange = algos
@@ -92,7 +93,7 @@ const algos = [
 
  //globalThis.setTimeout(() => {
  algo_melange.forEach(algo => {
-  console.log(`algo ${algo.nom} : total ${algo.temps}ms sur ${fois - ignore} exécutions`);
+  console.log(`${algo.temps}ms - algo ${algo.nom} sur ${fois - ignore} exécutions`);
  });
 
  const premier = algo_melange.sort((a, b) => {
