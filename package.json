@@ -19,7 +19,7 @@
   "author": "victor-auffret",
   "license": "MIT",
   "devDependencies": {
-    "astro": "^2.2.0",
-    "benchmark": "^2.1.4"
+    "astro": "^2.2.1",
+    "microtime": "^3.1.1"
   }
 }

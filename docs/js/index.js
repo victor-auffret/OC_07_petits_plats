@@ -1,5 +1,5 @@
 import { CardRecipe } from "./card-recipe.js"
-import { /*FilterFonctionnel,*/ FilterForWhile } from "./filter.js"
+import { FilterSansPromise, FilterFonctionnel, FilterForWhile } from "./filter.js"
 import { removeAllChild, ZONES } from "./util.js"
 
 async function getData() {
@@ -27,18 +27,8 @@ async function loadRecipes(recipes = []) {
 async function main() {
   window.customElements.define("card-recipe", CardRecipe)
   let data = await getData()
-  /*
-  let filter = new Filter(data)
- 
-  let searchForm = document.querySelector("")
-  searchForm.addEventListener("submit", e => {
-   e.preventDefault()
-   let inputValue = document.querySelector("").value
-   let filtredData = filter.filter(inputValue)
-   loadRecipes(filtredData)
-  })
-  */
-  console.log(data)
+
+  // console.log(data)
 
   let champRecherchePrincipal = document.querySelector("#chercher-recette")
 
@@ -48,14 +38,15 @@ async function main() {
     const tag = champRecherchePrincipal.value
     if (tag.length >= 3) {
       //let filtre = new FilterFonctionnel(data.recipes)
-      let filtre = new FilterForWhile(data.recipes)
+      //let filtre = new FilterForWhile(data.recipes)
+      let filtre = new FilterSansPromise(data.recipes)
       filtre.setZone([
         ZONES.titre,
         ZONES.ingredients,
         ZONES.description
       ])
       await filtre.filter(tag).then(result => {
-        console.log("result : :::: ", result)
+        console.log("résultats de la recherche : ", result)
         return loadRecipes(result)
       })
     }
