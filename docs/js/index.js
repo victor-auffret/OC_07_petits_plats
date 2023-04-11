@@ -35,9 +35,9 @@ async function main() {
     e.preventDefault();
     const tag = champRecherchePrincipal.value;
     if (tag.length >= 3) {
-      let filtre = new FilterFonctionnel(data.recipes);
-      //let filtre = new FilterForWhile(data.recipes);
-      //let filtre = new FilterSansPromise(data.recipes);
+      //let filtre = new FilterForWhile(data.recipes);    // le plus rapide
+      let filtre = new FilterSansPromise(data.recipes);   // le plus lisible
+      //let filtre = new FilterFonctionnel(data.recipes); // le plus farfelu
       filtre.setZone([
         ZONES.titre,
         ZONES.ingredients,

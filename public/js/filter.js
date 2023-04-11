@@ -2,12 +2,24 @@ import { ZONES } from './util.js';
 
 class Filter {
 
-  constructor(data = []) {
+  constructor(data = [] /*, parent = null*/) {
     this.isFormated = false;
     this.zones = [];
+    //this.parent = parent;
+    //if (parent == null) {
     this.data = data;
+    //}
     this.formateData();
   }
+
+  /*
+  getData() {
+    if (this.parent != null) {
+      return this.parent.getData()
+    } else {
+      return this.data;
+    }
+  }*/
 
   // on transforme tout en tableau de string
   formateData() {
@@ -50,7 +62,7 @@ class FilterFonctionnel extends Filter {
     if (!this.tagIsValid(tag)) {
       return this.data;
     }
-    const exp = new RegExp(tag);
+    //const exp = new RegExp(tag);
 
     const zones_size = this.zones.length;
 
@@ -59,8 +71,8 @@ class FilterFonctionnel extends Filter {
       for (let i = 0; i < zones_size; i++) {
         const zone = this.zones[i];
         promises.push(new Promise((resolve, reject) => {
-          const currentList = recipe?.zones?.[zone];
-          const ok = currentList.some(txt => exp.test(txt))
+          const currentList = recipe.zones[zone];
+          const ok = currentList.some(txt => txt.indexOf(tag) > 0 /*exp.test(txt)*/);
           if (ok) {
             resolve(true);
           } else {
@@ -90,7 +102,7 @@ class FilterForWhile extends Filter {
     if (!this.tagIsValid(tag)) {
       return this.data;
     }
-    const exp = new RegExp(tag);
+    //const exp = new RegExp(tag);
     const zones_size = this.zones.length;
     const predicate = (recipe) => {
       let trouve = false;
@@ -101,7 +113,8 @@ class FilterForWhile extends Filter {
         const currentListSize = currentList.length
         let i = 0;
         while (!trouve && i < currentListSize) {
-          trouve ||= exp.test(currentList[i]);
+          trouve = currentList[i].includes(tag);
+          //trouve ||= currentList[i].indexOf(tag) > 0; //exp.test(currentList[i]);
           i++;
         }
         zone++;
@@ -130,7 +143,7 @@ class FilterSansPromise extends Filter {
     if (!this.tagIsValid(tag)) {
       return this.data;
     }
-    const exp = new RegExp(tag);
+    //const exp = new RegExp(tag);
     const nb_of_zone = this.zones.length;
     const predicate = (recipe) => {
       let trouve = false;
@@ -138,7 +151,7 @@ class FilterSansPromise extends Filter {
       while (!trouve && i < nb_of_zone) {
         const currentZone = this.zones[i];
         const currentList = recipe.zones[currentZone];
-        trouve = (currentList.some(chaine => exp.test(chaine)));
+        trouve = (currentList.some(chaine => chaine.indexOf(tag) > 0 /*chaine.includes(tag) /*exp.test(chaine)*/));
         ++i;
       }
       return trouve;
@@ -148,4 +161,16 @@ class FilterSansPromise extends Filter {
 
 }
 
-export { FilterFonctionnel, FilterForWhile, FilterSansPromise }
+class FilterArrayMethodOnly extends Filter {
+
+  async filter(tag = "") {
+    if (!this.tagIsValid(tag)) {
+      return this.data;
+    }
+    const predicate = (recipe) => recipe.zones.some(currentList => currentList.some(chaine => chaine.indexOf(tag) > 0));
+    return this.data.filter(predicate)
+  }
+
+}
+
+export { FilterFonctionnel, FilterForWhile, FilterSansPromise, FilterArrayMethodOnly }

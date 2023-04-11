@@ -59,7 +59,7 @@ class FilterFonctionnel extends Filter {
       for (let i = 0; i < zones_size; i++) {
         const zone = this.zones[i];
         promises.push(new Promise((resolve, reject) => {
-          const currentList = recipe?.zones?.[zone];
+          const currentList = recipe.zones[zone];
           const ok = currentList.some(txt => exp.test(txt))
           if (ok) {
             resolve(true);

@@ -1,4 +1,4 @@
-import { FilterFonctionnel, FilterForWhile, FilterSansPromise } from "./filter.js";
+import { FilterFonctionnel, FilterForWhile, FilterSansPromise, FilterArrayMethodOnly } from "./filter.js";
 import { ZONES, melanger } from "./util.js";
 import * as data from "../data/data.json" assert {
  type: 'json',
@@ -18,7 +18,7 @@ const tags = [
  "cui"
 ]
 // nombre d execution de code
-const fois = 3_000_000;
+const fois = 1_000_000;
 // on peut ignorer les premiers resultats
 const ignore = 0;
 
@@ -44,6 +44,11 @@ const algos = [
   temps: 0,
   construct: new FilterSansPromise(recipes)
  },
+ {
+  nom: "Algo array method only FONCTIONNEL",
+  temps: 0,
+  construct: new FilterArrayMethodOnly(recipes)
+ }
 ];
 
 (async () => {
@@ -62,7 +67,7 @@ const algos = [
  let algo_melange = algos
  algo_melange.forEach(algo => algo.construct.setZone(ZONES_A_TESTER))
 
- // on test 100 fois
+ // on test 3 000 000 fois
  for (let i = 0; i < fois; i++) {
   // on change l'ordre des tests
   algo_melange = melanger(algo_melange);

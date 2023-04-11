@@ -62,7 +62,7 @@ const algos = [
  let algo_melange = algos
  algo_melange.forEach(algo => algo.construct.setZone(ZONES_A_TESTER))
 
- // on test 100 fois
+ // on test 3 000 000 fois
  for (let i = 0; i < fois; i++) {
   // on change l'ordre des tests
   algo_melange = melanger(algo_melange);
