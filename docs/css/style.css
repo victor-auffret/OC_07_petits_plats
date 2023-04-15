@@ -144,6 +144,9 @@ body {
 }
 
 .list-tags {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
   margin-bottom: 15px;
 }
 
@@ -257,4 +260,34 @@ body {
   font-weight: 400;
   line-height: 12px;
   font-size: 0.75rem;
+}
+
+/** tag **/
+
+.tag {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
+  gap: 10px;
+  width: fit-content;
+  padding: 10px 20px;
+  border: solid 1px var(--gris-input);
+  background-color: var(--gris-input);
+  color: #fff;
+}
+
+.tag_INGREDIENTS {
+  border-color: var(--bleu-btn);
+  background-color: var(--bleu-btn);
+}
+
+.tag_APPAREILS {
+  border-color: var(--vert-btn);
+  background-color: var(--vert-btn);
+}
+
+.tag_USTENCILES {
+  border-color: var(--orange-btn);
+  background-color: var(--orange-btn);
 }

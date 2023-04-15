@@ -1,35 +1,56 @@
-import { ZONES } from './util.js';
+import { ZONES, tagIsValid } from './util.js';
 
 class Filter {
 
-  constructor(data = [] /*, parent = null*/) {
+  constructor(data = [], parent = null) {
     this.isFormated = false;
+    this.isFiltred = true;
     this.zones = [];
-    //this.parent = parent;
-    //if (parent == null) {
+    this.tag = ""
+    this.parent = parent;
     this.data = data;
-    //}
     this.formateData();
   }
 
-  /*
-  getData() {
-    if (this.parent != null) {
-      return this.parent.getData()
-    } else {
+  setParent(parent = null, data = []) {
+    this.parent = parent;
+    this.data = data;
+    this.isFiltred = false;
+    if (data.length > 0) {
+      this.formateData();
+    }
+  }
+
+  setTag(tag = "") {
+    if (tagIsValid(tag)) {
+      this.tag = tag.replace(/\s+/g, ' ').trim().toLowerCase();
+      this.isFiltred = false;
+    }
+  }
+
+  /*async*/ getData() {
+    if (this.parent == null) {
       return this.data;
     }
-  }*/
+    if (!this.parent.isFiltred) {
+      return /*await*/ this.parent.filter();
+    }
+    return this.parent.data;
+  }
+
+  canFilter() {
+    return this.zones.length > 0 && tagIsValid(this.tag);
+  }
 
   // on transforme tout en tableau de string
-  formateData() {
-    this.data = this.data.map(recipe => {
+  /*async*/ formateData() {
+    this.data = (/*await*/ this.getData()).map(recipe => {
       const zones = {
-        [ZONES.appareils]: [recipe.appliance ?? ""],
-        [ZONES.description]: [recipe.description ?? ""],
-        [ZONES.ingredients]: recipe.ingredients.map(ing => ing.ingredient),
-        [ZONES.titre]: [recipe.name ?? ""],
-        [ZONES.ustenciles]: recipe.ustensils ?? []
+        [ZONES.appareils]: (recipe?.appliance ?? "").toLowerCase(),
+        [ZONES.description]: (recipe?.description ?? "").toLowerCase(),
+        [ZONES.ingredients]: recipe?.ingredients.map(ing => ing.ingredient.toLowerCase()).join(" "),
+        [ZONES.titre]: (recipe?.name ?? "").toLowerCase(),
+        [ZONES.ustenciles]: (recipe?.ustensils?.join(" ") ?? "").toLowerCase()
       };
       recipe.zones = zones;
       return recipe;
@@ -39,6 +60,9 @@ class Filter {
 
   setData(data = []) {
     this.data = data;
+    if (data.length > 0) {
+      this.formateData()
+    }
     this.isFormated = false;
   }
 
@@ -46,131 +70,10 @@ class Filter {
     this.zones = zones;
   }
 
-  async filter(tag = "") {
+  /*async*/ filter() {
     return this.data;
   }
 
-  tagIsValid(tag = "") {
-    return !(tag == "" || tag.length < 3);
-  }
-
 }
 
-class FilterFonctionnel extends Filter {
-
-  async filter(tag = "") {
-    if (!this.tagIsValid(tag)) {
-      return this.data;
-    }
-    //const exp = new RegExp(tag);
-
-    const zones_size = this.zones.length;
-
-    const predicate = async (recipe) => {
-      let promises = [];
-      for (let i = 0; i < zones_size; i++) {
-        const zone = this.zones[i];
-        promises.push(new Promise((resolve, reject) => {
-          const currentList = recipe.zones[zone];
-          const ok = currentList.some(txt => txt.indexOf(tag) > 0 /*exp.test(txt)*/);
-          if (ok) {
-            resolve(true);
-          } else {
-            reject(false);
-          }
-        }));
-      }
-      return Promise.any(promises).catch(() => false);
-    }
-    // OK
-    return this.data.reduce(async (results, recipe) => await predicate(recipe) ? [...(await results), recipe] : results, []);
-    // predicate(recipe).then(async ok => ok ? [...(await results), recipe] : results)
-    // Promise.all([results, predicate(recipe)]).then(([r, ok]) => ok ? [...r, recipe] : r)
-
-    // NE FONCTIONNE PAS
-    // return this.data.filter(predicate)
-
-    // FAIT 2 BOUCLES
-    // return Promise.all(this.data.map(recipe => predicate(recipe))).then(boolTab => this.data.filter((_, i) => boolTab[i]))
-  }
-
-}
-
-class FilterForWhile extends Filter {
-
-  async filter(tag = "") {
-    if (!this.tagIsValid(tag)) {
-      return this.data;
-    }
-    //const exp = new RegExp(tag);
-    const zones_size = this.zones.length;
-    const predicate = (recipe) => {
-      let trouve = false;
-      let zone = 0;
-      while (!trouve && zone < zones_size) {
-        const currentZone = this.zones[zone];
-        const currentList = recipe.zones[currentZone]
-        const currentListSize = currentList.length
-        let i = 0;
-        while (!trouve && i < currentListSize) {
-          trouve = currentList[i].includes(tag);
-          //trouve ||= currentList[i].indexOf(tag) > 0; //exp.test(currentList[i]);
-          i++;
-        }
-        zone++;
-      }
-      return trouve;
-    };
-
-    let index = -1;
-    let resIndex = 0;
-    const length = this.data.length;
-    const result = [];
-
-    while (++index < length) {
-      const value = this.data[index];
-      if (predicate(value)) {
-        result[resIndex++] = value;
-      }
-    }
-    return result;
-  }
-}
-
-class FilterSansPromise extends Filter {
-
-  async filter(tag = "") {
-    if (!this.tagIsValid(tag)) {
-      return this.data;
-    }
-    //const exp = new RegExp(tag);
-    const nb_of_zone = this.zones.length;
-    const predicate = (recipe) => {
-      let trouve = false;
-      let i = 0;
-      while (!trouve && i < nb_of_zone) {
-        const currentZone = this.zones[i];
-        const currentList = recipe.zones[currentZone];
-        trouve = (currentList.some(chaine => chaine.indexOf(tag) > 0 /*chaine.includes(tag) /*exp.test(chaine)*/));
-        ++i;
-      }
-      return trouve;
-    };
-    return this.data.filter(predicate)
-  }
-
-}
-
-class FilterArrayMethodOnly extends Filter {
-
-  async filter(tag = "") {
-    if (!this.tagIsValid(tag)) {
-      return this.data;
-    }
-    const predicate = (recipe) => recipe.zones.some(currentList => currentList.some(chaine => chaine.indexOf(tag) > 0));
-    return this.data.filter(predicate)
-  }
-
-}
-
-export { FilterFonctionnel, FilterForWhile, FilterSansPromise, FilterArrayMethodOnly }
+export { Filter }

@@ -1,4 +1,4 @@
-import { FilterFonctionnel, FilterForWhile, FilterSansPromise } from "./filter.js";
+import { FilterFonctionnel, FilterHybride, FilterWhile /*, FilterAsyncPromise */ } from "./filtres/index.js";
 import { ZONES, melanger } from "./util.js";
 import * as data from "../data/data.json" assert {
  type: 'json',
@@ -18,7 +18,7 @@ const tags = [
  "cui"
 ]
 // nombre d execution de code
-const fois = 3_000_000;
+const fois = 15_000_000;
 // on peut ignorer les premiers resultats
 const ignore = 0;
 
@@ -29,21 +29,31 @@ const ZONES_A_TESTER = [
 ];
 
 const algos = [
+ /*
  {
   nom: "Algo Fonctionnel avec PROMISE",
   temps: 0,
-  construct: new FilterFonctionnel(recipes)
- },
+  async: true,
+  filtre: new FilterFonctionnel(recipes)
+ },*/
  {
   nom: "Algo avec WHILE",
   temps: 0,
-  construct: new FilterForWhile(recipes)
+  async: false,
+  filtre: new FilterWhile(recipes)
  },
  {
   nom: "Algo Fonctionnel HYBRIDE (while, sans promise)",
   temps: 0,
-  construct: new FilterSansPromise(recipes)
+  async: false,
+  filtre: new FilterHybride(recipes)
  },
+ {
+  nom: "Algo array method only FONCTIONNEL",
+  temps: 0,
+  async: false,
+  filtre: new FilterFonctionnel(recipes)
+ }
 ];
 
 (async () => {
@@ -52,7 +62,12 @@ const algos = [
  const test = async (algo, tag = "") => {
   //console.log(`test de l'algo ${algo.nom}`);
   const start = performance.now();
-  await algo.construct.filter(tag);
+
+  //if (algo.async == true) {
+  // await algo.filtre.filter(tag)
+  //} else {
+  algo.filtre.filter(tag);
+  //}
   const stop = performance.now();
   const total = (stop - start);
   algo.temps = (algo.temps + total);
@@ -60,17 +75,19 @@ const algos = [
  }
 
  let algo_melange = algos
- algo_melange.forEach(algo => algo.construct.setZone(ZONES_A_TESTER))
+ algo_melange.forEach(algo => algo.filtre.setZone(ZONES_A_TESTER))
 
  // on test 3 000 000 fois
  for (let i = 0; i < fois; i++) {
   // on change l'ordre des tests
   algo_melange = melanger(algo_melange);
   for (const algo of algo_melange) {
-   await test(algo, tags[i % tags.length]);
+   //await test(algo, tags[i % tags.length]);
+   test(algo, tags[i % tags.length]);
+   /*
    if (i < ignore) {
     algo.temps = 0
-   }
+   }*/
   }
  }
 
