@@ -3,28 +3,23 @@ import { Filter } from "../filter.js";
 class FilterWhile extends Filter {
 
  filter() {
-
   // memoisation
   if (this.isFiltred) {
    return this.data;
-  }
-
-  if (this.parent != null && !this.parent.isFiltred) {
-   this.parent.filter();
   }
 
   if (!this.canFilter()) {
    return this.getData();
   }
 
-  const zones_size = this.zones.length;
+  const nb_of_zone = this.zones.length;
   const predicate = (recipe) => {
    let trouve = false;
    let zone = 0;
-   while (!trouve && zone < zones_size) {
+   while (!trouve && zone < nb_of_zone) {
     const currentZone = this.zones[zone];
-    const currentList = recipe.zones[currentZone]
-    trouve = (currentList.indexOf(this.tag) > 0)
+    const currentList = recipe.zones[currentZone];
+    trouve = (currentList.indexOf(this.tag) > 0);
     zone++;
    }
    return trouve;
@@ -42,7 +37,7 @@ class FilterWhile extends Filter {
   }
   this.data = result;
   this.isFiltred = true;
-  return result;
+  return this.data;
  }
 }
 

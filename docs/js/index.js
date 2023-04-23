@@ -1,9 +1,9 @@
 import { CardRecipe } from "./card-recipe.js"
 import { removeAllChild, ZONES } from "./util.js"
-import { StateMachine } from "./stateMachine.js";
+import { FilterManager } from "./filterManager.js";
 
 const [getMachine] = (() => {
-  const machine = new StateMachine();
+  const machine = new FilterManager();
   const getMachine = () => machine;
   return [getMachine]
 })()
@@ -51,20 +51,14 @@ function showTags(machine) {
     }
     span.appendChild(document.createTextNode(tag));
     const croix = document.createElement("img");
+    croix.classList.add("tag-close");
     croix.src = "./assets/croix.svg";
     croix.alt = "supprimer";
     croix.addEventListener("click", async (e) => {
       e.preventDefault()
-
       if (machine.supTag(tag)) {
-        console.log("remove")
         resultPlace.removeChild(span);
         return loadRecipes(machine.getResult())
-        /*
-        await machine.getResult().then(result => {
-          //console.log("résultats de la recherche : ", result);
-          return loadRecipes(result);
-        });*/
       }
     })
     span.appendChild(croix);
@@ -81,10 +75,8 @@ async function main() {
   machine.setData(data?.recipes ?? []);
 
   let formulaire = document.querySelector("#form-recherche");
-  console.log(formulaire)
   formulaire.addEventListener('submit', async (e) => {
     e.preventDefault();
-    console.log("envoie form")
 
     const getTagValue = (champ) => {
       const tag = (champ?.value ?? "").replace(/\s+/g, ' ').trim().toLowerCase();

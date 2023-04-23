@@ -60,7 +60,7 @@ a,
 a:hover,
 a:visited {
   text-decoration: none;
-  color: default;
+  color: #000;
 }
 
 ul,
@@ -272,22 +272,23 @@ body {
   gap: 10px;
   width: fit-content;
   padding: 10px 20px;
-  border: solid 1px var(--gris-input);
+  border: solid 1px transparent;
   background-color: var(--gris-input);
   color: #fff;
 }
 
+.tag-close:hover {
+  cursor: pointer;
+}
+
 .tag_INGREDIENTS {
-  border-color: var(--bleu-btn);
   background-color: var(--bleu-btn);
 }
 
 .tag_APPAREILS {
-  border-color: var(--vert-btn);
   background-color: var(--vert-btn);
 }
 
 .tag_USTENCILES {
-  border-color: var(--orange-btn);
   background-color: var(--orange-btn);
 }

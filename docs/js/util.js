@@ -27,6 +27,6 @@ const ZONES = {
   description: '_DESCRIPTION',
   ustenciles: '_USTENCILES',
   appareils: '_APPAREILS'
-}
+};
 
 export { removeAllChild, melanger, tagIsValid, ZONES }

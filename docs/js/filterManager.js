@@ -1,7 +1,9 @@
-import { FilterFonctionnel, FilterHybride, FilterWhile /*, FilterAsyncPromise */ } from "./filtres/index.js";
 import { tagIsValid } from "./util.js";
+import { FilterHybride } from "./filtres/index.js";
+// import { FilterWhile } from "./filtres/index.js";
+// import { FilterFonctionnel } from "./filtres/index.js";
 
-class StateMachine {
+class FilterManager {
 
  constructor() {
   this.data = [];
@@ -23,16 +25,16 @@ class StateMachine {
 
  handleAddTag(tag = "", zones = []) {
   if (this.currentFilter == null) {
-   this.currentFilter = new FilterFonctionnel(this.data);
+   //this.currentFilter = new FilterFonctionnel(this.data);
    // this.currentFilter = new FilterForWhile(this.data);
-   //this.currentFilter = new FilterHybride(this.data);
+   this.currentFilter = new FilterHybride(this.data);
    // this.currentFilter = new FilterArrayMethodOnly(this.data); 
    this.currentFilter.setZone(zones);
    this.currentFilter.setTag(tag);
   } else {
-   let nextFilter = new FilterFonctionnel([], this.currentFilter);
+   //let nextFilter = new FilterFonctionnel([], this.currentFilter);
    // let nextFilter =  new FilterForWhile([], this.currentFilter);
-   //let nextFilter = new FilterHybride([], this.currentFilter);
+   let nextFilter = new FilterHybride([], this.currentFilter);
    // let nextFilter = new FilterArrayMethodOnly([], this.currentFilter); 
    nextFilter.setZone(zones);
    nextFilter.setTag(tag);
@@ -87,4 +89,4 @@ class StateMachine {
 
 }
 
-export { StateMachine };
+export { FilterManager };

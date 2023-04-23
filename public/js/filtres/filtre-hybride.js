@@ -8,10 +8,6 @@ class FilterHybride extends Filter {
    return this.data;
   }
 
-  if (this.parent != null && !this.parent.isFiltred) {
-   this.parent.filter();
-  }
-
   if (!this.canFilter()) {
    return this.getData();
   }
@@ -19,16 +15,16 @@ class FilterHybride extends Filter {
   const nb_of_zone = this.zones.length;
   const predicate = (recipe) => {
    let trouve = false;
-   let i = 0;
-   while (!trouve && i < nb_of_zone) {
-    const currentZone = this.zones[i];
+   let zone = -1;
+   while (!trouve && ++zone < nb_of_zone) {
+    const currentZone = this.zones[zone];
     const currentList = recipe.zones[currentZone];
     trouve = (currentList.indexOf(this.tag) > 0);
-    ++i;
+    //++zone;
    }
    return trouve;
   };
-  this.data = this.getData().filter(predicate)
+  this.data = this.getData().filter(predicate);
   this.isFiltred = true;
   return this.data;
  }

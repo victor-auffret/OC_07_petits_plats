@@ -8,10 +8,6 @@ class FilterAsyncPromise extends Filter {
    return this.data;
   }
 
-  if (this.parent != null && !this.parent.isFiltred) {
-   await this.parent.filter();
-  }
-
   if (!this.canFilter()) {
    return this.getData();
   }

@@ -4,9 +4,9 @@ class Filter {
 
   constructor(data = [], parent = null) {
     this.isFormated = false;
-    this.isFiltred = true;
+    this.isFiltred = false;
     this.zones = [];
-    this.tag = ""
+    this.tag = "";
     this.parent = parent;
     this.data = data;
     this.formateData();
@@ -28,14 +28,14 @@ class Filter {
     }
   }
 
-  /*async*/ getData() {
-    if (this.parent == null) {
+  getData() {
+    if (this.parent == null || this.isFiltred) {
       return this.data;
     }
-    if (!this.parent.isFiltred) {
-      return /*await*/ this.parent.filter();
-    }
-    return this.parent.data;
+    //if (!this.parent.isFiltred) {
+    return this.parent.filter();
+    //}
+    //return this.parent.data;
   }
 
   canFilter() {
@@ -43,8 +43,8 @@ class Filter {
   }
 
   // on transforme tout en tableau de string
-  /*async*/ formateData() {
-    this.data = (/*await*/ this.getData()).map(recipe => {
+  formateData() {
+    this.data = this.getData().map(recipe => {
       const zones = {
         [ZONES.appareils]: (recipe?.appliance ?? "").toLowerCase(),
         [ZONES.description]: (recipe?.description ?? "").toLowerCase(),
@@ -61,7 +61,7 @@ class Filter {
   setData(data = []) {
     this.data = data;
     if (data.length > 0) {
-      this.formateData()
+      this.formateData();
     }
     this.isFormated = false;
   }
@@ -70,7 +70,7 @@ class Filter {
     this.zones = zones;
   }
 
-  /*async*/ filter() {
+  filter() {
     return this.data;
   }
 

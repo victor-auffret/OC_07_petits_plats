@@ -18,9 +18,9 @@ const tags = [
  "cui"
 ]
 // nombre d execution de code
-const fois = 15_000_000;
+const fois = 12_000_000;
 // on peut ignorer les premiers resultats
-const ignore = 0;
+const ignore = 0; //100;
 
 const ZONES_A_TESTER = [
  ZONES.titre,
@@ -34,7 +34,7 @@ const algos = [
   nom: "Algo Fonctionnel avec PROMISE",
   temps: 0,
   async: true,
-  filtre: new FilterFonctionnel(recipes)
+  filtre: new FilterAsyncPromise(recipes)
  },*/
  {
   nom: "Algo avec WHILE",
@@ -64,7 +64,7 @@ const algos = [
   const start = performance.now();
 
   //if (algo.async == true) {
-  // await algo.filtre.filter(tag)
+  //await algo.filtre.filter(tag)
   //} else {
   algo.filtre.filter(tag);
   //}
@@ -84,10 +84,9 @@ const algos = [
   for (const algo of algo_melange) {
    //await test(algo, tags[i % tags.length]);
    test(algo, tags[i % tags.length]);
-   /*
    if (i < ignore) {
     algo.temps = 0
-   }*/
+   }
   }
  }
 

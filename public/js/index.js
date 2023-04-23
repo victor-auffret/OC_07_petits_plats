@@ -1,9 +1,9 @@
 import { CardRecipe } from "./card-recipe.js"
 import { removeAllChild, ZONES } from "./util.js"
-import { StateMachine } from "./stateMachine.js";
+import { FilterManager } from "./filterManager.js";
 
 const [getMachine] = (() => {
-  const machine = new StateMachine();
+  const machine = new FilterManager();
   const getMachine = () => machine;
   return [getMachine]
 })()
@@ -51,6 +51,7 @@ function showTags(machine) {
     }
     span.appendChild(document.createTextNode(tag));
     const croix = document.createElement("img");
+    croix.classList.add("tag-close");
     croix.src = "./assets/croix.svg";
     croix.alt = "supprimer";
     croix.addEventListener("click", async (e) => {
