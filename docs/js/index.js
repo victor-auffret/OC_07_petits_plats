@@ -1,5 +1,5 @@
 import { CardRecipe } from "./card-recipe.js"
-import { removeAllChild, formatTag, ZONES, NOMS_CHAMPS } from "./util.js"
+import { removeAllChild, formatTag, ZONES, NOMS_CHAMPS, tagIsValid } from "./util.js"
 import { FilterManager } from "./filterManager.js";
 
 // récupération des données du fichier json
@@ -71,6 +71,50 @@ function renderTags(manager) {
 
 }
 
+// affiche la liste des ingedients et autres pour auto completion des tags
+function showAutocomplete(tag, champ, manager) {
+  // on récupère la liste des éléments correspondant
+  let list = manager.getList(champ, tag);
+  if (list.length > 0) {
+    console.log("on affiche la liste")
+    let autoComplet = document.querySelector(`.list${champ.name}`)
+    if (autoComplet) {
+      removeAllChild(autoComplet)
+      let uls = [
+        document.createElement("div"),
+        document.createElement("div"),
+        document.createElement("div")
+      ];
+      list.forEach((elem, i) => {
+        let li = document.createElement("p")
+        li.classList.add("auto-tag-clic")
+        let span = document.createElement("span")
+        span.appendChild(document.createTextNode(elem))
+        li.appendChild(span)
+        li.addEventListener('click', e => {
+          console.log("ajout du tag + validation");
+          // todo : changer pour tag complet
+          let tagComplet = tag;
+          manager.inputChange(champ, tagComplet);
+          manager.validate();
+          renderRecipes(manager.getResult());
+          champ.input.value = "";
+          // on affiche les tags
+          renderTags(manager);
+        })
+        uls[i % 3].appendChild(li);
+      })
+      uls.forEach(ul => {
+        ul.classList.add("list-auto-tag")
+        autoComplet.appendChild(ul)
+      })
+
+    }
+  } else {
+    removeAllChild(document.querySelector(`.list${champ.name}`))
+  }
+}
+
 // main lancé au chargement de la page
 async function main() {
   window.customElements.define("card-recipe", CardRecipe);
@@ -84,13 +128,8 @@ async function main() {
 
     const manager = new FilterManager();
     manager.setData(data?.recipes ?? []);
-    console.log(data.recipes)
 
-    const getAndRemoveTagValue = (champ) => {
-      const tag = formatTag(champ?.value ?? "");
-      champ.value = "";
-      return tag;
-    }
+    // console.log(data.recipes)
 
     const formulaire = document.querySelector("#form-recherche");
     const champRecherchePrincipal = document.querySelector("#chercher-recette");
@@ -98,13 +137,23 @@ async function main() {
     const champRechercheAppareils = document.querySelector("#appareils");
     const champRechercheUstenciles = document.querySelector("#ustensiles");
 
-    const champs = [
+    const champInfos = {
+      input: champRecherchePrincipal,
+      name: NOMS_CHAMPS.principale,
+      zones: [ZONES.titre, ZONES.ingredients, ZONES.description]
+    };
 
-      {
-        input: champRecherchePrincipal,
-        name: NOMS_CHAMPS.principale,
-        zones: [ZONES.titre, ZONES.ingredients, ZONES.description]
-      },
+    champRecherchePrincipal.addEventListener("input", e => {
+      const tag = formatTag(e.target.value);
+      // on envoie les données au manager
+      manager.inputChange(champInfos, tag);
+      // on récupère les résultats
+      const result = manager.getResult();
+      // on affiche les résultats
+      renderRecipes(result);
+    })
+
+    const champs = [
       {
         input: champRechercheIngredients,
         name: NOMS_CHAMPS.ingredients,
@@ -124,15 +173,19 @@ async function main() {
 
     // on ajoute un effet lorsque 3 caractères sont tapés
     champs.forEach(champ => {
+      champ.input.addEventListener("focusout", e => {
+        window.setTimeout(() => removeAllChild(document.querySelector(`.list${champ.name}`)), 200)
+      })
+
+      champ.input.addEventListener("click", e => {
+        let tag = formatTag(champRecherchePrincipal.value)
+        showAutocomplete(tag, champ, manager);
+      })
+
       champ.input.addEventListener("input", e => {
         const tag = formatTag(e.target.value);
-        // on envoie les données au manager
-        manager.inputChange(champ, tag);
-        // on récupère les résultats
-        const result = manager.getResult();
-        // on affiche les résultats
-        renderRecipes(result);
-      })
+        showAutocomplete(tag, champ, manager);
+      });
     });
 
 
@@ -142,6 +195,7 @@ async function main() {
       if (manager.validate()) {
         // on supprime le contenu du champ
         champs.forEach(champ => champ.input.value = "");
+        champRecherchePrincipal.value = ""
         // on affiche les tags
         renderTags(manager);
       }

@@ -153,7 +153,7 @@ body {
 .form-criteres {
   display: flex;
   flex-direction: row;
-  align-items: center;
+  align-items: flex-start;
   justify-content: start;
   flex-wrap: wrap;
   margin-bottom: 25px;
@@ -161,11 +161,13 @@ body {
 
 .label-critere {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   align-items: center;
-  justify-content: space-around;
-  height: 70px;
+  justify-content: space-evenly;
+  min-height: 70px;
+  max-width: 60%;
   margin-right: 20px;
+  padding-top: 30px;
   padding-left: 30px;
   padding-right: 30px;
   gap: 30px;
@@ -291,4 +293,25 @@ body {
 
 .tag_USTENCILES {
   background-color: var(--orange-btn);
+}
+
+.list-autocomplete {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: start;
+  height: auto;
+  font-size: 1.125rem;
+  gap: 30px;
+}
+
+.list-auto-tag {
+  min-width: 30%;
+  width: 100%;
+  color: #fff;
+}
+
+.auto-tag-clic:hover {
+  background-color: #fff;
+  color: #000;
 }

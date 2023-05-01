@@ -1,4 +1,4 @@
-import { formatTag, tagIsValid, ZONES } from "./util.js";
+import { formatTag, NOMS_CHAMPS, tagIsValid, ZONES } from "./util.js";
 import { FilterHybride } from "./filtres/index.js";
 // import { FilterWhile } from "./filtres/index.js";
 // import { FilterFonctionnel } from "./filtres/index.js";
@@ -53,10 +53,16 @@ class FilterManager {
 
   // cree un filtre OU modifie le filtre courrant
   inputChange(champ, tag) {
-    if (!this.isCurrentInput(champ)) {
+    if (this.currentFilter != null) {
+      if (this.currentFilter.getNomChamp() != champ.name) {
+        // on supprime l ancien filtre en cours d edition
+        this.cancelCurrentFilter()
+      }
+    }
+    // premiere lettre tapee
+    if (this.currentInput == null) {
       this.currentInput = champ;
       this.addNewFilter();
-      this.currentFilter.setNomChamp(champ.name)
     }
     this.setCurrentTag(tag);
   }
@@ -154,6 +160,27 @@ class FilterManager {
       return true;
     }
     return false;
+  }
+
+  // 
+  getList(champ, tag = "") {
+    console.log('get list !!!!!!!!!')
+    tag = formatTag(tag)
+    if (tagIsValid(tag)) {
+      return [...new Set(this.getResult()
+        .map(recipe => {
+          console.log("recette : ", recipe.zones)
+          console.log("nom champ : ", champ.name)
+          let zone = recipe.zones[champ.name] ?? "";
+          console.log("zone ?", zone)
+          if (zone != "") {
+            console.log(zone);
+          }
+          return zone;
+        })
+        .filter((zone) => zone.indexOf(tag) > 0))];
+    }
+    return []
   }
 
 }
