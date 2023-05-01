@@ -23,7 +23,7 @@ class FilterHybride extends Filter {
    while (!trouve && ++zone < nb_of_zone) {
     const currentZone = this.zones[zone];
     const currentList = recipe.zones[currentZone];
-    trouve = (currentList.indexOf(this.tag) > 0);
+    trouve = (currentList.indexOf(this.tag) >= 0);
     //++zone;
    }
    return trouve;

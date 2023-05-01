@@ -20,7 +20,7 @@ class FilterAsyncPromise extends Filter {
     const zone = this.zones[i];
     promises.push(new Promise((resolve, reject) => {
      const currentList = recipe.zones[zone];
-     const ok = (currentList.indexOf(this.tag) > 0);
+     const ok = (currentList.indexOf(this.tag) >= 0);
      if (ok) {
       resolve(true);
      } else {

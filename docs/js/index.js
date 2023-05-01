@@ -27,7 +27,7 @@ function renderRecipes(recipes = []) {
 
 function createTag(coloredTag, manager, resultPlace) {
   let { tag, couleur, name } = coloredTag
-  console.log("tag : ", tag, " couleur : ", couleur, " name : ", name)
+  //console.log("tag : ", tag, " couleur : ", couleur, " name : ", name)
   const span = document.createElement("span");
   span.classList.add("tag");
   if (couleur != "") {
@@ -73,8 +73,10 @@ function renderTags(manager) {
 
 // affiche la liste des ingedients et autres pour auto completion des tags
 function showAutocomplete(tag, champ, manager) {
+  console.log("autocomplete ", champ.name, " ", tag)
   // on récupère la liste des éléments correspondant
   let list = manager.getList(champ, tag);
+  console.log("LIST AUTO ", list)
   if (list.length > 0) {
     console.log("on affiche la liste")
     let autoComplet = document.querySelector(`.list${champ.name}`)
@@ -173,6 +175,7 @@ async function main() {
 
     // on ajoute un effet lorsque 3 caractères sont tapés
     champs.forEach(champ => {
+
       champ.input.addEventListener("focusout", e => {
         window.setTimeout(() => removeAllChild(document.querySelector(`.list${champ.name}`)), 200)
       })
@@ -183,6 +186,7 @@ async function main() {
       })
 
       champ.input.addEventListener("input", e => {
+        console.log("chaaaaaaaaaammmmp", champ)
         const tag = formatTag(e.target.value);
         showAutocomplete(tag, champ, manager);
       });

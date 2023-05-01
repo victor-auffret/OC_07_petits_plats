@@ -86,12 +86,12 @@ class FilterManager {
   // QUE FAIT CETTE FONCTION : 
   // elle renvoie les données (filtrées si un filtre existe)
   getResult() {
-    console.log("get results", this)
+    //console.log("get results", this)
     if (this.currentFilter != null) {
-      console.log("pas null")
+      //console.log("pas null")
       return this.currentFilter.filter();
     }
-    console.log("null")
+    //console.log("null")
     return this.data;
   }
 
@@ -105,26 +105,26 @@ class FilterManager {
 
   removeTag({ tag, name }) {
     if (this.currentFilter != null && tagIsValid(tag) && this.tags.some(c => tag == c.tag && c.name == name)) {
-      console.log("REMOVE TAG OK", tag, " - ", name)
+      //console.log("REMOVE TAG OK", tag, " - ", name)
       let filtres = [];
       let filtre = this.currentFilter;
-      console.log(filtre)
+      //console.log(filtre)
       while (filtre != null && filtre.hasParent()) {
         if (filtre.tag == tag && filtre.getNomChamp() == name) {
-          console.log("--break")
+          //console.log("--break")
           break;
         }
-        console.log("-no-break")
+        //console.log("-no-break")
         filtre.isFiltred = false;
         filtres.push(filtre);
         filtre = filtre.getParent();
-        console.log("parent : ", filtre)
+        //console.log("parent : ", filtre)
       }
 
-      console.log("parent : ", filtre)
+      //console.log("parent : ", filtre)
 
       if (filtre != null && filtre.tag == tag) {
-        console.log("filtre non null tag ok")
+        //console.log("filtre non null tag ok")
         let nouveauParent = filtre.getParent();
         if (filtres.length > 0) {
           let nouvelEnfant = filtres.pop();
@@ -149,7 +149,7 @@ class FilterManager {
       const name = this.currentFilter.getNomChamp();
       const zones = this.currentFilter.getZones();
       const exist = (this.tags.some(el => el.tag.indexOf(tag) > 0 && el.name == name) > 0);
-      console.log(this.tags, " index ", exist)
+      // console.log(this.tags, " index ", exist)
       if (!tagIsValid(tag) || exist) {
         // on supprime le filtre courrant
         this.cancelCurrentFilter();
@@ -166,19 +166,19 @@ class FilterManager {
   getList(champ, tag = "") {
     console.log('get list !!!!!!!!!')
     tag = formatTag(tag)
+    console.log(champ, tag)
     if (tagIsValid(tag)) {
-      return [...new Set(this.getResult()
-        .map(recipe => {
-          console.log("recette : ", recipe.zones)
-          console.log("nom champ : ", champ.name)
-          let zone = recipe.zones[champ.name] ?? "";
-          console.log("zone ?", zone)
-          if (zone != "") {
-            console.log(zone);
-          }
-          return zone;
-        })
-        .filter((zone) => zone.indexOf(tag) > 0))];
+      console.log("tag valide            zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz")
+      return [...new Set(
+        this.getResult()
+          .map(recipe => {
+            //console.log("recette : ", recipe.zones)
+            //console.log("nom champ : ", champ.name)
+            let zone = recipe.zones[champ.name] ?? "";
+            console.log("zone ?", zone)
+            return zone;
+          })
+          .filter((zone) => zone.indexOf(tag) >= 0))];
     }
     return []
   }
