@@ -5,12 +5,16 @@ class FilterHybride extends Filter {
  filter() {
   // memoisation
   if (this.isFiltred) {
-   return this.data;
+   console.log("is filtred")
+   return this.results;
   }
 
   if (!this.canFilter()) {
+   console.log("cant filter")
    return this.getData();
   }
+
+  console.log("ok filter")
 
   const nb_of_zone = this.zones.length;
   const predicate = (recipe) => {
@@ -24,9 +28,9 @@ class FilterHybride extends Filter {
    }
    return trouve;
   };
-  this.data = this.getData().filter(predicate);
+  this.results = this.getResults().filter(predicate);
   this.isFiltred = true;
-  return this.data;
+  return this.results;
  }
 
 }

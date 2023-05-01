@@ -1,118 +1,157 @@
 import { CardRecipe } from "./card-recipe.js"
-import { removeAllChild, ZONES } from "./util.js"
+import { removeAllChild, formatTag, ZONES, NOMS_CHAMPS } from "./util.js"
 import { FilterManager } from "./filterManager.js";
 
-const [getMachine] = (() => {
-  const machine = new FilterManager();
-  const getMachine = () => machine;
-  return [getMachine]
-})()
-
+// récupération des données du fichier json
 async function getData() {
   return (await fetch("./data/data.json")).json();
 }
 
-async function loadRecipes(recipes = []) {
+// affiche les résultats (supprime les anciens résultats)
+function renderRecipes(recipes = []) {
   let resultats = document.querySelector(".resultats");
   removeAllChild(resultats);
-  await window.customElements
-    .whenDefined("card-recipe")
-    .then(async () => {
-      for (let i = 0; i < recipes.length; i++) {
-        let card = document.createElement("card-recipe");
-        let recipeZip = JSON.stringify(recipes[i]);
-        card.setAttribute("recipe", recipeZip);
-        card.recipe = recipeZip;
-        resultats.appendChild(card);
-      }
-    });
+  const size = recipes.length;
+  if (size == 0) {
+    resultats.appendChild(document.createTextNode("Aucun résultats"));
+    return;
+  }
+  for (let i = 0; i < size; i++) {
+    let card = document.createElement("card-recipe");
+    let recipeZip = JSON.stringify(recipes[i]);
+    card.setAttribute("recipe", recipeZip);
+    card.recipe = recipeZip;
+    resultats.appendChild(card);
+  }
 }
 
-function showTags(machine) {
+function createTag(coloredTag, manager, resultPlace) {
+  let { tag, couleur, name } = coloredTag
+  console.log("tag : ", tag, " couleur : ", couleur, " name : ", name)
+  const span = document.createElement("span");
+  span.classList.add("tag");
+  if (couleur != "") {
+    span.classList.add(couleur);
+  }
+  span.appendChild(document.createTextNode(tag));
+  const croix = document.createElement("img");
+  croix.classList.add("tag-close");
+  croix.src = "./assets/croix.svg";
+  croix.alt = "supprimer";
+  croix.addEventListener("click", async (e) => {
+    e.preventDefault()
+    if (manager.removeTag(coloredTag)) {
+      resultPlace.removeChild(span);
+      renderRecipes(manager.getResult());
+    }
+  })
+  span.appendChild(croix);
+  return span;
+}
+
+function renderTags(manager) {
   const resultPlace = document.querySelector(".list-tags");
   removeAllChild(resultPlace);
 
-  let filtre = machine.currentFilter;
+  let filtre = manager.currentFilter;
   let tags = []
   while (filtre != null) {
     const tag = {
       tag: filtre.tag,
-      couleur: (filtre.zones.length == 1) ? `tag${filtre.zones[0]}` : ""
+      couleur: (filtre.zones.length == 1) ? `tag${filtre.zones[0]}` : "",
+      name: filtre.getNomChamp()
     }
     tags.push(tag)
     filtre = filtre.parent;
   }
 
-  tags.reverse().forEach(async ({ tag, couleur }) => {
-    const span = document.createElement("span");
-    span.classList.add("tag");
-    if (couleur != "") {
-      span.classList.add(couleur);
-    }
-    span.appendChild(document.createTextNode(tag));
-    const croix = document.createElement("img");
-    croix.classList.add("tag-close");
-    croix.src = "./assets/croix.svg";
-    croix.alt = "supprimer";
-    croix.addEventListener("click", async (e) => {
-      e.preventDefault()
-      if (machine.supTag(tag)) {
-        resultPlace.removeChild(span);
-        return loadRecipes(machine.getResult())
-      }
-    })
-    span.appendChild(croix);
-    resultPlace.appendChild(span);
+  tags.reverse().forEach(async (coloredTag) => {
+    resultPlace.appendChild(createTag(coloredTag, manager, resultPlace));
   })
 
 }
 
+// main lancé au chargement de la page
 async function main() {
   window.customElements.define("card-recipe", CardRecipe);
-  let data = await getData();
 
-  const machine = getMachine();
-  machine.setData(data?.recipes ?? []);
+  // chargement des données
+  let dataPromise = getData();
+  // element html pour afficher les recettes
+  let cardRecipePromise = window.customElements.whenDefined("card-recipe");
 
-  let formulaire = document.querySelector("#form-recherche");
-  formulaire.addEventListener('submit', async (e) => {
-    e.preventDefault();
+  Promise.all([dataPromise, cardRecipePromise]).then(([data, _]) => {
 
-    const getTagValue = (champ) => {
-      const tag = (champ?.value ?? "").replace(/\s+/g, ' ').trim().toLowerCase();
+    const manager = new FilterManager();
+    manager.setData(data?.recipes ?? []);
+    console.log(data.recipes)
+
+    const getAndRemoveTagValue = (champ) => {
+      const tag = formatTag(champ?.value ?? "");
       champ.value = "";
       return tag;
     }
 
+    const formulaire = document.querySelector("#form-recherche");
     const champRecherchePrincipal = document.querySelector("#chercher-recette");
-    machine.addTag(getTagValue(champRecherchePrincipal), [
-      ZONES.titre,
-      ZONES.ingredients,
-      ZONES.description
-    ]);
-
     const champRechercheIngredients = document.querySelector("#ingredients");
-    machine.addTag(getTagValue(champRechercheIngredients), [ZONES.ingredients]);
-
     const champRechercheAppareils = document.querySelector("#appareils");
-    machine.addTag(getTagValue(champRechercheAppareils), [ZONES.appareils]);
-
     const champRechercheUstenciles = document.querySelector("#ustensiles");
-    machine.addTag(getTagValue(champRechercheUstenciles), [ZONES.ustenciles]);
 
-    const result = machine.getResult()
-    showTags(machine);
-    return loadRecipes(result);
-    /*
-    await machine.getResult().then(result => {
-      // console.log("résultats de la recherche : ", result);
-      showTags(machine);
-      return loadRecipes(result);
-    });*/
+    const champs = [
+
+      {
+        input: champRecherchePrincipal,
+        name: NOMS_CHAMPS.principale,
+        zones: [ZONES.titre, ZONES.ingredients, ZONES.description]
+      },
+      {
+        input: champRechercheIngredients,
+        name: NOMS_CHAMPS.ingredients,
+        zones: [ZONES.ingredients]
+      },
+      {
+        input: champRechercheAppareils,
+        name: NOMS_CHAMPS.appareils,
+        zones: [ZONES.appareils]
+      },
+      {
+        input: champRechercheUstenciles,
+        name: NOMS_CHAMPS.ustenciles,
+        zones: [ZONES.ustenciles]
+      },
+    ];
+
+    // on ajoute un effet lorsque 3 caractères sont tapés
+    champs.forEach(champ => {
+      champ.input.addEventListener("input", e => {
+        const tag = formatTag(e.target.value);
+        // on envoie les données au manager
+        manager.inputChange(champ, tag);
+        // on récupère les résultats
+        const result = manager.getResult();
+        // on affiche les résultats
+        renderRecipes(result);
+      })
+    });
+
+
+    formulaire.addEventListener('submit', e => {
+      e.preventDefault();
+      // on valide les tags
+      if (manager.validate()) {
+        // on supprime le contenu du champ
+        champs.forEach(champ => champ.input.value = "");
+        // on affiche les tags
+        renderTags(manager);
+      }
+    });
+
+
+    // on affiche les données du json non triées
+    renderRecipes(data.recipes);
 
   });
-
-  await loadRecipes(data.recipes);
 }
 
 document.addEventListener('readystatechange', () => {

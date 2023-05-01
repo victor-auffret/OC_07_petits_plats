@@ -17,6 +17,10 @@ function melanger(tab = []) {
   return tab;
 }
 
+function formatTag(unformattedTag = "") {
+  return unformattedTag.replace(/\s+/g, ' ').trim().toLowerCase();
+}
+
 function tagIsValid(tag = "") {
   return tag.length >= 3;
 }
@@ -29,4 +33,11 @@ const ZONES = {
   appareils: '_APPAREILS'
 };
 
-export { removeAllChild, melanger, tagIsValid, ZONES }
+const NOMS_CHAMPS = {
+  principale: '_PRINCIPALE',
+  ingredients: '_INGREDIENTS',
+  ustenciles: '_USTENCILES',
+  appareils: '_APPAREILS'
+}
+
+export { removeAllChild, melanger, tagIsValid, formatTag, ZONES, NOMS_CHAMPS }
