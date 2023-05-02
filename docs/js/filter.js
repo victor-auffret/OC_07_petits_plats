@@ -19,8 +19,6 @@ class Filter {
   }
 
   canFilter() {
-    console.log("zones : ", this.zones.length)
-    console.log("tag : ", this.tag)
     return this.zones.length > 0 && tagIsValid(this.tag);
   }
 
@@ -55,13 +53,10 @@ class Filter {
 
   setTag(tag = "") {
     tag = formatTag(tag);
-    console.log("check tag ", tag)
     if (tagIsValid(tag)) {
-      console.log("tag valide")
       this.tag = tag;
       this.isFiltred = false;
     }
-    console.log("tag valide ou pas !!!")
   }
 
   // retourne les dernières données non filtrées valides (à utiliser pour un nouveau filtre)

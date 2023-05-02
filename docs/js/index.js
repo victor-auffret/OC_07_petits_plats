@@ -186,7 +186,6 @@ async function main() {
       })
 
       champ.input.addEventListener("input", e => {
-        console.log("chaaaaaaaaaammmmp", champ)
         const tag = formatTag(e.target.value);
         showAutocomplete(tag, champ, manager);
       });
