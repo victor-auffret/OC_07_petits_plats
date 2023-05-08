@@ -154,10 +154,39 @@ class FilterManager {
   getList(champ, tag = "") {
     tag = formatTag(tag)
     if (tagIsValid(tag)) {
-      return [...new Set(
-        this.getResult()
-          .map(recipe => recipe.zones[champ.name] ?? "")
-          .filter((zone) => zone.indexOf(tag) >= 0))];
+      let elements = this.getResult()
+      switch (champ.name) {
+        case NOMS_CHAMPS.appareils: {
+          return [...new Set(elements
+            .filter(recipe => recipe.zones[ZONES.appareils].indexOf(tag) >= 0)
+            .map(recipe => recipe.appliance.toLowerCase()))
+          ];
+        }
+
+        case NOMS_CHAMPS.ustenciles: {
+          // (recipe?.ustensils?.join(" ") ?? "").toLowerCase()
+          let results = elements.map(recipe => recipe.ustensils).flat()
+          //.reduce((ustenciles, acc) => [acc, ...ustenciles], [])
+          return [...new Set(results.filter(ustencile => ustencile.indexOf(tag) >= 0))];
+        }
+
+        case NOMS_CHAMPS.ingredients: {
+          //recipe?.ingredients.map(ing => ing.ingredient.toLowerCase())
+          let results = elements
+            .map(recipe => recipe?.ingredients.map(ing => ing.ingredient.toLowerCase()))
+            .flat();
+          return [...new Set(results.filter(ingredient => ingredient.indexOf(tag) >= 0))];
+        }
+
+        default: {
+          return [...new Set(
+            elements
+              .map(recipe => recipe.zones[champ.name] ?? "")
+              .filter((zone) => zone.indexOf(tag) >= 0))
+          ];
+        }
+      }
+
     }
     return []
   }

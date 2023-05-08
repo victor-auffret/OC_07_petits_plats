@@ -27,7 +27,6 @@ function renderRecipes(recipes = []) {
 
 function createTag(coloredTag, manager, resultPlace) {
   let { tag, couleur, name } = coloredTag
-  //console.log("tag : ", tag, " couleur : ", couleur, " name : ", name)
   const span = document.createElement("span");
   span.classList.add("tag");
   if (couleur != "") {
@@ -73,12 +72,9 @@ function renderTags(manager) {
 
 // affiche la liste des ingedients et autres pour auto completion des tags
 function showAutocomplete(tag, champ, manager) {
-  console.log("autocomplete ", champ.name, " ", tag)
   // on récupère la liste des éléments correspondant
   let list = manager.getList(champ, tag);
-  console.log("LIST AUTO ", list)
   if (list.length > 0) {
-    console.log("on affiche la liste")
     let autoComplet = document.querySelector(`.list${champ.name}`)
     if (autoComplet) {
       removeAllChild(autoComplet)
@@ -94,9 +90,9 @@ function showAutocomplete(tag, champ, manager) {
         span.appendChild(document.createTextNode(elem))
         li.appendChild(span)
         li.addEventListener('click', e => {
-          console.log("ajout du tag + validation");
+          e.preventDefault();
           // todo : changer pour tag complet
-          let tagComplet = tag;
+          let tagComplet = elem; //tag;
           manager.inputChange(champ, tagComplet);
           manager.validate();
           renderRecipes(manager.getResult());
@@ -130,8 +126,6 @@ async function main() {
 
     const manager = new FilterManager();
     manager.setData(data?.recipes ?? []);
-
-    // console.log(data.recipes)
 
     const formulaire = document.querySelector("#form-recherche");
     const champRecherchePrincipal = document.querySelector("#chercher-recette");

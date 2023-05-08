@@ -315,3 +315,29 @@ body {
   background-color: #fff;
   color: #000;
 }
+
+.input-detail,
+.input-detail:focus,
+.input-detail:focus-visible {
+  background-color: transparent;
+  color: #fff;
+  caret-color: #fff;
+  border: none;
+  outline: none;
+}
+
+.input-detail::placeholder {
+  color: #fff;
+}
+
+.arrow-box :last-child {
+  display: none;
+}
+
+.input-detail:focus-visible ~ .icon-arrow {
+  display: none;
+}
+
+.input-detail:focus-visible ~ .icon-arrow ~ .icon-arrow {
+  display: inline;
+}
