@@ -5,7 +5,7 @@ class FilterAsyncPromise extends Filter {
  async filter() {
   // memoisation
   if (this.isFiltred) {
-   return this.data;
+   return this.results;
   }
 
   if (!this.canFilter()) {
@@ -32,9 +32,9 @@ class FilterAsyncPromise extends Filter {
   };
   // OK
 
-  this.data = await this.getData().then(data => data.reduce(async (results, recipe) => await predicate(recipe) ? [...(await results), recipe] : results, []));
+  this.results = await this.getData().then(data => data.reduce(async (results, recipe) => await predicate(recipe) ? [...(await results), recipe] : results, []));
   this.isFiltred = true;
-  return this.data;
+  return this.results;
  }
 
 }

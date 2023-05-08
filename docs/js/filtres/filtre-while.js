@@ -5,7 +5,7 @@ class FilterWhile extends Filter {
  filter() {
   // memoisation
   if (this.isFiltred) {
-   return this.data;
+   return this.results;
   }
 
   if (!this.canFilter()) {
@@ -35,9 +35,9 @@ class FilterWhile extends Filter {
     result[resIndex++] = value;
    }
   }
-  this.data = result;
+  this.results = result;
   this.isFiltred = true;
-  return this.data;
+  return this.results;
  }
 }
 
