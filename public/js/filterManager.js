@@ -16,6 +16,10 @@ class FilterManager {
     this.currentInput = null;
   }
 
+  setCurrentInput(input) {
+    this.currentInput = input;
+  }
+
   // creation d un nouveau filtre
   addNewFilter() {
     if (this.currentFilter == null) {
@@ -133,18 +137,22 @@ class FilterManager {
 
   // valide le champ en cours d edition pour ajouter le tag de la bonne couleur
   validate() {
+    console.log("try validate", this.currentInput, this.currentFilter)
     if (this.currentInput != null && this.currentFilter != null) {
       const tag = this.currentFilter.getTag();
       const name = this.currentFilter.getNomChamp();
       const zones = this.currentFilter.getZones();
       const exist = (this.tags.some(el => el.tag.indexOf(tag) > 0 && el.name == name) > 0);
+      console.log("exist ", exist)
       if (!tagIsValid(tag) || exist) {
         // on supprime le filtre courrant
+        console.log("filterr ", this.currentFilter)
         this.cancelCurrentFilter();
         return false;
       }
       this.currentInput = null;
       this.tags.push({ tag, zones, name });
+      console.log("oookk")
       return true;
     }
     return false;

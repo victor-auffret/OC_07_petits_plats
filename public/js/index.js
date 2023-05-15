@@ -175,12 +175,22 @@ async function main() {
       })
 
       champ.input.addEventListener("click", e => {
-        let tag = formatTag(champRecherchePrincipal.value)
+        if (champ.input.value == "") {
+          champ.input.value = champRecherchePrincipal.value;
+          manager.setCurrentInput(champ);
+          manager.addNewFilter();
+          champ.input.focus();
+        }
+        const tag = formatTag(e.target.value);
         showAutocomplete(tag, champ, manager);
       })
 
       champ.input.addEventListener("input", e => {
         const tag = formatTag(e.target.value);
+        manager.inputChange(champ, tag);
+        const result = manager.getResult();
+        // on affiche les résultats
+        renderRecipes(result);
         showAutocomplete(tag, champ, manager);
       });
     });
