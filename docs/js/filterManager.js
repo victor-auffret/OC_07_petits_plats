@@ -3,6 +3,12 @@ import { FilterHybride } from "./filtres/index.js";
 // import { FilterWhile } from "./filtres/index.js";
 // import { FilterFonctionnel } from "./filtres/index.js";
 
+function makeFilter(data = [], parent = null) {
+  return new FilterHybride(data, parent);
+  // return new FilterWhile(data, parent);
+  // return new FilterFonctionnel(data, parent);
+}
+
 class FilterManager {
 
   constructor() {
@@ -33,9 +39,9 @@ class FilterManager {
   addNewFilter() {
     let lastValidateFilter = this.getLastValidateFilter();
     if (lastValidateFilter == null) {
-      this.currentFilter = new FilterHybride(this.data);
+      this.currentFilter = makeFilter(this.data);
     } else {
-      let nouveauFiltre = new FilterHybride([], lastValidateFilter);
+      let nouveauFiltre = makeFilter([], lastValidateFilter);
       this.currentFilter = nouveauFiltre;
     }
     if (this.currentInput != null) {
@@ -123,7 +129,7 @@ class FilterManager {
   // elle renvoie les données (filtrées si un filtre existe)
   getResult() {
     if (this.currentFilter != null) {
-      console.log("curr filter not null", this.currentFilter)
+      //console.log("curr filter not null", this.currentFilter)
       return this.currentFilter.filter();
     }
     return this.data;
@@ -189,15 +195,15 @@ class FilterManager {
         this.setTag(this.currentInput.input.value);
       }
       const tag = formatTag(this.currentFilter.getTag());
-      console.log("tag validate : ", tag)
+      //console.log("tag validate : ", tag)
       const name = this.currentFilter.getNomChamp();
       //const zones = this.currentFilter.getZones();
       const exist = this.tagExist(name, tag);
 
       if (!tagIsValid(tag) || exist) {
         // on supprime le filtre courrant
-        console.log('CANCEL !!!!!!!!!!!!!!!!!!!!!!!', exist, tag);
-        console.log(this)
+        //console.log('CANCEL !!!!!!!!!!!!!!!!!!!!!!!', exist, tag);
+        //console.log(this)
         this.cancelCurrentFilter();
         return false;
       }
@@ -210,8 +216,8 @@ class FilterManager {
 
   validateClic(champ, tag = "") {
 
-    console.log("validate clic")
-    console.log(this)
+    //console.log("validate clic")
+    //console.log(this)
 
     this.setCurrentInput(champ);
     this.addNewFilter();

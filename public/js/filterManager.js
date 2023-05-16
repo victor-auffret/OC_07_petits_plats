@@ -3,6 +3,12 @@ import { FilterHybride } from "./filtres/index.js";
 // import { FilterWhile } from "./filtres/index.js";
 // import { FilterFonctionnel } from "./filtres/index.js";
 
+function makeFilter(data = [], parent = null) {
+  return new FilterHybride(data, parent);
+  // return new FilterWhile(data, parent);
+  // return new FilterFonctionnel(data, parent);
+}
+
 class FilterManager {
 
   constructor() {
@@ -33,9 +39,9 @@ class FilterManager {
   addNewFilter() {
     let lastValidateFilter = this.getLastValidateFilter();
     if (lastValidateFilter == null) {
-      this.currentFilter = new FilterHybride(this.data);
+      this.currentFilter = makeFilter(this.data);
     } else {
-      let nouveauFiltre = new FilterHybride([], lastValidateFilter);
+      let nouveauFiltre = makeFilter([], lastValidateFilter);
       this.currentFilter = nouveauFiltre;
     }
     if (this.currentInput != null) {
