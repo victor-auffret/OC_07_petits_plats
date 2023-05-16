@@ -28,14 +28,14 @@ class FilterWhile extends Filter {
   let resIndex = 0;
   const data = this.getData();
   const length = data.length;
-  const result = [];
+  this.results = [];
   while (++index < length) {
    const value = data[index];
    if (predicate(value)) {
-    result[resIndex++] = value;
+    this.results[resIndex++] = value;
    }
   }
-  this.results = result;
+
   this.isFiltred = true;
   return this.results;
  }

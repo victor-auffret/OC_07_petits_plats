@@ -93,8 +93,8 @@ function showAutocomplete(tag, champ, manager) {
           e.preventDefault();
           // todo : changer pour tag complet
           let tagComplet = elem; //tag;
-          manager.inputChange(champ, tagComplet);
-          manager.validate();
+          // manager.inputChange(champ, tagComplet);
+          manager.validateClic(champ, tagComplet);
           renderRecipes(manager.getResult());
           champ.input.value = "";
           // on affiche les tags
@@ -175,22 +175,30 @@ async function main() {
       })
 
       champ.input.addEventListener("click", e => {
-        if (champ.input.value == "") {
+        let tag = ""
+        if (champ.input.value == "" && champRecherchePrincipal.value != "") {
           champ.input.value = champRecherchePrincipal.value;
-          manager.setCurrentInput(champ);
-          manager.addNewFilter();
-          champ.input.focus();
+          /*
+          tag = formatTag(champ.input.value);
+          manager.setCurrentFilter(champ, tag);*/
         }
-        const tag = formatTag(e.target.value);
+        /*
+        else {
+          tag = formatTag(champ.input.value); //e.target.value);
+          manager.setCurrentInput(champ);
+        }*/
+        tag = formatTag(champ.input.value);
         showAutocomplete(tag, champ, manager);
       })
 
       champ.input.addEventListener("input", e => {
         const tag = formatTag(e.target.value);
+        /*
+        manager.setCurrentFilter(champ, tag);
         manager.inputChange(champ, tag);
         const result = manager.getResult();
         // on affiche les résultats
-        renderRecipes(result);
+        renderRecipes(result);*/
         showAutocomplete(tag, champ, manager);
       });
     });

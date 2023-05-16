@@ -12,7 +12,6 @@ class FilterHybride extends Filter {
    return this.getData();
   }
 
-
   const nb_of_zone = this.zones.length;
   const predicate = (recipe) => {
    let trouve = false;
@@ -21,7 +20,6 @@ class FilterHybride extends Filter {
     const currentZone = this.zones[zone];
     const currentList = recipe.zones[currentZone];
     trouve = (currentList.indexOf(this.tag) >= 0);
-    //++zone;
    }
    return trouve;
   };

@@ -1,4 +1,4 @@
-import { ZONES, tagIsValid, formatTag } from './util.js';
+import { tagIsValid, formatTag } from './util.js';
 
 class Filter {
 
@@ -9,8 +9,7 @@ class Filter {
     this.parent = parent;
     this.data = data;
     this.results = [];
-    this.nomChamp = ""
-    //this.formateData();
+    this.nomChamp = "";
   }
 
   // fonction réécrite dans les différentes classes héritées
@@ -40,10 +39,8 @@ class Filter {
     return this.hasParent() ? this.parent : null;
   }
 
-  setParent(parent = null /*, data = []*/) {
+  setParent(parent = null) {
     this.parent = parent;
-    //this.setData(data)
-    //this.data = data;
     this.isFiltred = false;
   }
 
