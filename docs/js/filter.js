@@ -10,6 +10,15 @@ class Filter {
     this.data = data;
     this.results = [];
     this.nomChamp = "";
+    this.validate = false
+  }
+
+  isValidate() {
+    return this.validate;
+  }
+
+  setValidate(valid) {
+    this.validate = valid;
   }
 
   // fonction réécrite dans les différentes classes héritées

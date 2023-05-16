@@ -94,7 +94,9 @@ function showAutocomplete(tag, champ, manager) {
           // todo : changer pour tag complet
           let tagComplet = elem; //tag;
           // manager.inputChange(champ, tagComplet);
-          manager.validateClic(champ, tagComplet);
+          manager.inputChange(champ, tagComplet);
+          manager.validate();
+          // manager.validateClic(champ, tagComplet);
           renderRecipes(manager.getResult());
           champ.input.value = "";
           // on affiche les tags
@@ -178,24 +180,32 @@ async function main() {
         let tag = ""
         if (champ.input.value == "" && champRecherchePrincipal.value != "") {
           champ.input.value = champRecherchePrincipal.value;
-          /*
-          tag = formatTag(champ.input.value);
-          manager.setCurrentFilter(champ, tag);*/
+          if (manager.currentFilter != null &&
+            manager.currentFilter.getTag() == champRecherchePrincipal.value &&
+            !manager.currentFilter.isValidate()) {
+            manager.cancelCurrentFilter();
+            manager.setCurrentInput(champ);
+          }
+          champRecherchePrincipal.value = "";
         }
-        /*
-        else {
-          tag = formatTag(champ.input.value); //e.target.value);
-          manager.setCurrentInput(champ);
-        }*/
         tag = formatTag(champ.input.value);
+        manager.inputChange(champ, tag);
         showAutocomplete(tag, champ, manager);
       })
 
       champ.input.addEventListener("input", e => {
         const tag = formatTag(e.target.value);
+
+        if (!manager.isCurrentInput(champ)) {
+          manager.setCurrentInput(champ);
+          manager.addNewFilter();
+        } else {
+          manager.setCurrentInput(champ);
+          manager.setCurrentTag(tag);
+          //manager.inputChange(champ, tag);
+        }
+
         /*
-        manager.setCurrentFilter(champ, tag);
-        manager.inputChange(champ, tag);
         const result = manager.getResult();
         // on affiche les résultats
         renderRecipes(result);*/

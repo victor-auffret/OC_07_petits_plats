@@ -8,16 +8,21 @@ class FilterManager {
   constructor() {
     // les données du json (non filtrés)
     this.data = [];
-    // la liste des tags validés
-    this.tags = [];
     // le filtre courrant
     this.currentFilter = null;
     // champ actuel en cours d edition de tag
     this.currentInput = null;
   }
 
-  getTags() {
-    return this.tags;
+  getLastValidateFilter() {
+    let filter = this.currentFilter;
+    while (filter != null) {
+      if (filter.isValidate()) {
+        return filter;
+      }
+      filter = filter.getParent()
+    }
+    return null;
   }
 
   setCurrentInput(champ) {
@@ -26,14 +31,17 @@ class FilterManager {
 
   // creation d un nouveau filtre
   addNewFilter() {
-    if (this.currentFilter == null) {
+    let lastValidateFilter = this.getLastValidateFilter();
+    if (lastValidateFilter == null) {
       this.currentFilter = new FilterHybride(this.data);
     } else {
-      let nouveauFiltre = new FilterHybride([], this.currentFilter);
+      let nouveauFiltre = new FilterHybride([], lastValidateFilter);
       this.currentFilter = nouveauFiltre;
     }
-    this.setCurrentZones(this.currentInput.zones);
-    this.currentFilter.setNomChamp(this.currentInput.name);
+    if (this.currentInput != null) {
+      this.setCurrentZones(this.currentInput.zones);
+      this.currentFilter.setNomChamp(this.currentInput.name);
+    }
   }
 
   setCurrentFilter(champ, tag = "") {
@@ -50,8 +58,8 @@ class FilterManager {
   }
 
   setTag(tag = "") {
-    if (this.currentFilter != null) {
-      this.currentFilter.setTag(tag);
+    if (this.currentFilter != null && !this.currentFilter.isValidate()) {
+      this.currentFilter.setTag(formatTag(tag));
     }
   }
 
@@ -70,6 +78,8 @@ class FilterManager {
       if (!tagIsValid(tag)) {
         this.cancelCurrentFilter();
       }
+    } else {
+      console.log("echec set current tag")
     }
   }
 
@@ -82,16 +92,14 @@ class FilterManager {
   // cree un filtre OU modifie le filtre courrant
   inputChange(champ, tag) {
     if (this.currentFilter != null) {
-      if (this.currentFilter.getNomChamp() != champ.name) {
+      if (this.currentFilter.getNomChamp() != champ.name && !this.currentFilter.isValidate()) {
         // on supprime l ancien filtre en cours d edition
         this.cancelCurrentFilter()
       }
     }
-    // premiere lettre tapee
-    if (this.currentInput == null) {
-      this.currentInput = champ;
-      this.addNewFilter();
-    }
+
+    this.setCurrentInput(champ);
+    this.addNewFilter();
     this.setCurrentTag(tag);
   }
 
@@ -115,6 +123,7 @@ class FilterManager {
   // elle renvoie les données (filtrées si un filtre existe)
   getResult() {
     if (this.currentFilter != null) {
+      console.log("curr filter not null", this.currentFilter)
       return this.currentFilter.filter();
     }
     return this.data;
@@ -129,7 +138,7 @@ class FilterManager {
   }
 
   removeTag({ tag, name }) {
-    if (this.currentFilter != null && tagIsValid(tag) && this.tags.some(c => tag == c.tag && c.name == name)) {
+    if (this.currentFilter != null && tagIsValid(tag) && this.tagExist(name, tag)) {
       let filtres = [];
       let filtre = this.currentFilter;
       while (filtre != null && filtre.hasParent()) {
@@ -159,24 +168,41 @@ class FilterManager {
     return false;
   }
 
+  tagExist(name, tag = "") {
+    let filtre = this.currentFilter;
+    while (filtre != null) {
+      if (filtre.getTag() == tag && filtre.getNomChamp() == name && filtre.isValidate()) {
+        return true;
+      }
+      filtre = filtre.getParent();
+    }
+    return false;
+  }
+
   // valide le champ en cours d edition pour ajouter le tag de la bonne couleur
   validate() {
     if (this.currentInput != null && this.currentFilter != null) {
-
-      const tag = this.currentFilter.getTag();
+      if (this.currentFilter.isValidate()) {
+        this.addNewFilter()
+      }
+      if (this.currentFilter.getTag().length < this.currentInput.input.value.length) {
+        this.setTag(this.currentInput.input.value);
+      }
+      const tag = formatTag(this.currentFilter.getTag());
+      console.log("tag validate : ", tag)
       const name = this.currentFilter.getNomChamp();
-      const zones = this.currentFilter.getZones();
-      const exist = (this.tags.some(el => el.tag.indexOf(tag) > 0 && el.name == name) > 0);
+      //const zones = this.currentFilter.getZones();
+      const exist = this.tagExist(name, tag);
 
       if (!tagIsValid(tag) || exist) {
         // on supprime le filtre courrant
-        console.log('CANCEL !!!!!!!!!!!!!!!!!!!!!!!')
+        console.log('CANCEL !!!!!!!!!!!!!!!!!!!!!!!', exist, tag);
+        console.log(this)
         this.cancelCurrentFilter();
         return false;
       }
+      this.currentFilter.setValidate(true);
       this.currentInput = null;
-      this.tags.push({ tag, zones, name });
-      console.log(this.tags)
       return true;
     }
     return false;
@@ -184,7 +210,7 @@ class FilterManager {
 
   validateClic(champ, tag = "") {
 
-    console.log("avant")
+    console.log("validate clic")
     console.log(this)
 
     this.setCurrentInput(champ);
