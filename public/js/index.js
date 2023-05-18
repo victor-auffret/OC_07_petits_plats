@@ -221,6 +221,9 @@ async function main() {
         // on supprime le contenu du champ
         champs.forEach(champ => champ.input.value = "");
         champRecherchePrincipal.value = ""
+
+        champs.forEach(champ => removeAllChild(document.querySelector(`.list${champ.name}`)));
+
         // on affiche les tags
         renderTags(manager);
       }
