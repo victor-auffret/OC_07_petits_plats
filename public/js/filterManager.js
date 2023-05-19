@@ -1,13 +1,8 @@
 import { formatTag, NOMS_CHAMPS, tagIsValid, ZONES } from "./util.js";
-import { FilterHybride } from "./filtres/index.js";
-// import { FilterWhile } from "./filtres/index.js";
-// import { FilterFonctionnel } from "./filtres/index.js";
-
-function makeFilter(data = [], parent = null) {
-  return new FilterHybride(data, parent);
-  // return new FilterWhile(data, parent);
-  // return new FilterFonctionnel(data, parent);
-}
+// commenter / décommenter les lignes pour tester les 3 algos
+import { FilterHybride as OptimizedFilter } from "./filtres/index.js";
+// import { FilterWhile as OptimizedFilter } from "./filtres/index.js";
+// import { FilterFonctionnel as OptimizedFilter } from "./filtres/index.js";
 
 class FilterManager {
 
@@ -39,9 +34,9 @@ class FilterManager {
   addNewFilter() {
     let lastValidateFilter = this.getLastValidateFilter();
     if (lastValidateFilter == null) {
-      this.currentFilter = makeFilter(this.data);
+      this.currentFilter = new OptimizedFilter(this.data);
     } else {
-      let nouveauFiltre = makeFilter([], lastValidateFilter);
+      let nouveauFiltre = new OptimizedFilter([], lastValidateFilter);
       this.currentFilter = nouveauFiltre;
     }
     if (this.currentInput != null) {
