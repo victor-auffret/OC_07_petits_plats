@@ -13,7 +13,7 @@ import Layout from "@components/Layout/index.astro";
   <form id="form-recherche" action="#">
 
    <label for="chercher-recette" class="label-chercher-recette">
-    <input type="search" value="" class="chercher-recette" name="chercher-recette" id="chercher-recette" placeholder="Rechercher une recette" />
+    <input type="search" value="" class="chercher-recette champ_principale" name="chercher-recette" id="chercher-recette" placeholder="Rechercher une recette" />
     
     <button class="loupe" name="loupe" id="loupe" type="submit">
       <img src="./assets/loupe.svg" alt="loupe" />
@@ -27,7 +27,7 @@ import Layout from "@components/Layout/index.astro";
 
     <label class="label-critere label-ingredient" for="ingredients">
       <span class="arrow-box">
-        <input class="input-detail" type="search" value="" name="ingredients" id="ingredients" placeholder="Ingrédients" autocomplete="off" />
+        <input class="input-detail champ_ingredients" type="search" value="" name="ingredients" id="ingredients" placeholder="Ingrédients" autocomplete="off" />
         <img class="icon-arrow" src="./assets/arrow_down.svg" alt="" />
         <img class="icon-arrow" src="./assets/arrow_up.svg" alt="" />
       </span>
@@ -36,7 +36,7 @@ import Layout from "@components/Layout/index.astro";
 
     <label class="label-critere label-appareils" for="appareils">
       <span class="arrow-box">
-        <input class="input-detail" type="search" value="" name="appareils" id="appareils" placeholder="Appareils" autocomplete="off" />
+        <input class="input-detail champ_appareils" type="search" value="" name="appareils" id="appareils" placeholder="Appareils" autocomplete="off" />
         <img class="icon-arrow" src="./assets/arrow_down.svg" alt="" />
         <img class="icon-arrow" src="./assets/arrow_up.svg" alt="" />
       </span>
@@ -45,7 +45,7 @@ import Layout from "@components/Layout/index.astro";
 
     <label class="label-critere label-ustensiles" for="ustensiles">
       <span class="arrow-box">
-        <input class="input-detail" type="search" value="" name="ustensiles" id="ustensiles" placeholder="Ustensiles" autocomplete="off" />
+        <input class="input-detail champ_ustenciles" type="search" value="" name="ustensiles" id="ustensiles" placeholder="Ustensiles" autocomplete="off" />
         <img class="icon-arrow" src="./assets/arrow_down.svg" alt="" />
         <img class="icon-arrow" src="./assets/arrow_up.svg" alt="" />
       </span>

@@ -37,14 +37,39 @@ function createTag(coloredTag, manager, resultPlace) {
   croix.classList.add("tag-close");
   croix.src = "./assets/croix.svg";
   croix.alt = "supprimer";
-  croix.addEventListener("click", async (e) => {
+  const supprimerTag = async (e) => {
     e.preventDefault()
     if (manager.removeTag(coloredTag)) {
       resultPlace.removeChild(span);
-      renderRecipes(manager.getResult());
+      // renderRecipes(manager.getResult());
     }
-  })
+  };
+  //croix.addEventListener("click", supprimerTag)
   span.appendChild(croix);
+  span.addEventListener("click", e => {
+    supprimerTag(e);
+    if (e.target == span) {
+      let input = document.querySelector(`.champ${name.toLowerCase()}`)
+      if (input) {
+        input.value = tag;
+        input.focus();
+        let champ = {
+          input,
+          name,
+          zones: name == NOMS_CHAMPS.principale ? [
+            ZONES.titre,
+            ZONES.description,
+            ZONES.ingredients
+          ] : ZONES[name],
+        };
+        // on envoie les données au manager
+        manager.inputChange(champ, tag);
+        showAutocomplete(tag, champ, manager);
+      }
+    }
+    // on affiche les résultats
+    renderRecipes(manager.getResult());
+  })
   return span;
 }
 
