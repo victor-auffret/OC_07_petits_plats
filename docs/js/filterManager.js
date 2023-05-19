@@ -1,8 +1,8 @@
 import { formatTag, NOMS_CHAMPS, tagIsValid, ZONES } from "./util.js";
 // commenter / décommenter les lignes pour tester les 3 algos
-// import { FilterHybride as OptimizedFilter } from "./filtres/index.js";
+import { FilterHybride as OptimizedFilter } from "./filtres/index.js";
 // import { FilterWhile as OptimizedFilter } from "./filtres/index.js";
-import { FilterFonctionnel as OptimizedFilter } from "./filtres/index.js";
+// import { FilterFonctionnel as OptimizedFilter } from "./filtres/index.js";
 
 class FilterManager {
 
