@@ -179,14 +179,15 @@ async function main() {
       champ.input.addEventListener("click", e => {
         let tag = ""
         if (champ.input.value == "" && champRecherchePrincipal.value != "") {
-          champ.input.value = champRecherchePrincipal.value;
           if (manager.currentFilter != null &&
             manager.currentFilter.getTag() == champRecherchePrincipal.value &&
             !manager.currentFilter.isValidate()) {
-            manager.cancelCurrentFilter();
+            if (manager.validate()) {
+              champRecherchePrincipal.value = "";
+              renderTags(manager);
+            }
             manager.setCurrentInput(champ);
           }
-          champRecherchePrincipal.value = "";
         }
         tag = formatTag(champ.input.value);
         manager.inputChange(champ, tag);
