@@ -1,10 +1,13 @@
-
+// supprimer tout le contenu d un element
 function removeAllChild(node) {
-  while (node.firstChild && node.lastChild) {
-    node.removeChild(node.lastChild);
+  if (node && node.children.length > 0) {
+    while (node.firstChild && node.lastChild) {
+      node.removeChild(node.lastChild);
+    }
   }
 }
 
+// melanger les elements d un array 
 function melanger(tab = []) {
   let currentIndex = tab.length;
   while (currentIndex != 0) {
@@ -17,6 +20,7 @@ function melanger(tab = []) {
   return tab;
 }
 
+// format du tag
 function formatTag(unformattedTag = "") {
   return unformattedTag.replace(/\s+/g, ' ').trim().toLowerCase();
 }

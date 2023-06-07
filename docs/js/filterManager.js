@@ -102,6 +102,8 @@ class FilterManager {
     this.setCurrentInput(champ);
     this.addNewFilter();
     this.setCurrentTag(tag);
+    // this.setCurrentZones(champ.zones)
+    // console.log(this.currentInput)
   }
 
   // les données json de base
@@ -259,7 +261,7 @@ class FilterManager {
     }
 
     //}
-    return []
+    //return []
   }
 
 }

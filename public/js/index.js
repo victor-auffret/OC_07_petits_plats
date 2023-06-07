@@ -25,6 +25,7 @@ function renderRecipes(recipes = []) {
   }
 }
 
+// creer un tag pouvant etre supprime ou edite
 function createTag(coloredTag, manager, resultPlace) {
   let { tag, couleur, name } = coloredTag
   const span = document.createElement("span");
@@ -48,6 +49,7 @@ function createTag(coloredTag, manager, resultPlace) {
   span.appendChild(croix);
   span.addEventListener("click", e => {
     supprimerTag(e);
+    renderRecipes(manager.getResult());
     if (e.target == span) {
       let input = document.querySelector(`.champ${name.toLowerCase()}`)
       if (input) {
@@ -56,23 +58,22 @@ function createTag(coloredTag, manager, resultPlace) {
         let champ = {
           input,
           name,
-          zones: name == NOMS_CHAMPS.principale ? [
+          zones: (name == NOMS_CHAMPS.principale) ? [
             ZONES.titre,
             ZONES.description,
             ZONES.ingredients
-          ] : ZONES[name],
+          ] : [name],
         };
         // on envoie les données au manager
         manager.inputChange(champ, tag);
         showAutocomplete(tag, champ, manager);
       }
     }
-    // on affiche les résultats
-    renderRecipes(manager.getResult());
   })
   return span;
 }
 
+// affiche la liste des tags validés
 function renderTags(manager) {
   const resultPlace = document.querySelector(".list-tags");
   removeAllChild(resultPlace);
@@ -243,16 +244,19 @@ async function main() {
     formulaire.addEventListener('submit', e => {
       e.preventDefault();
       // on valide les tags
-      if (manager.validate()) {
+      if (champRecherchePrincipal.value != "") {
+        const tag = formatTag(champRecherchePrincipal.value);
+        // on envoie les données au manager
+        manager.inputChange(champInfos, tag);
+        manager.validate()
         // on supprime le contenu du champ
-        champs.forEach(champ => champ.input.value = "");
-        champRecherchePrincipal.value = ""
-
-        champs.forEach(champ => removeAllChild(document.querySelector(`.list${champ.name}`)));
-
-        // on affiche les tags
-        renderTags(manager);
+        //champs.forEach(champ => champ.input.value = "");
       }
+      champRecherchePrincipal.value = ""
+      champs.forEach(champ => removeAllChild(document.querySelector(`.list${champ.name}`)));
+      // on affiche les tags
+      renderTags(manager);
+
     });
 
 
