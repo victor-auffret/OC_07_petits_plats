@@ -50,6 +50,8 @@ function createTag(coloredTag, manager, resultPlace) {
   span.addEventListener("click", e => {
     supprimerTag(e);
     renderRecipes(manager.getResult());
+    /*
+    // permet d editer un tag
     if (e.target == span) {
       let input = document.querySelector(`.champ${name.toLowerCase()}`)
       if (input) {
@@ -69,6 +71,7 @@ function createTag(coloredTag, manager, resultPlace) {
         showAutocomplete(tag, champ, manager);
       }
     }
+    */
   })
   return span;
 }

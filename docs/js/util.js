@@ -1,10 +1,10 @@
 // supprimer tout le contenu d un element
 function removeAllChild(node) {
-  if (node && node.children.length > 0) {
-    while (node.firstChild && node.lastChild) {
-      node.removeChild(node.lastChild);
-    }
+  //if (node && node.children.length > 0) {
+  while (node.firstChild && node.lastChild) {
+    node.removeChild(node.lastChild);
   }
+  //}
 }
 
 // melanger les elements d un array 
