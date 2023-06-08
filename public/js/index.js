@@ -1,5 +1,5 @@
 import { CardRecipe } from "./card-recipe.js"
-import { removeAllChild, formatTag, ZONES, NOMS_CHAMPS, tagIsValid } from "./util.js"
+import { removeAllChild, formatTag, ZONES, NOMS_CHAMPS } from "./util.js"
 import { FilterManager } from "./filterManager.js";
 
 // récupération des données du fichier json

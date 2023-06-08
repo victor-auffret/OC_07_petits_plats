@@ -259,9 +259,6 @@ class FilterManager {
         ];
       }
     }
-
-    //}
-    //return []
   }
 
 }
